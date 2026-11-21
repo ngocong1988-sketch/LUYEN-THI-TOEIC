@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TOEIC Master - Luyện Thi Listening & Reading</title>
+    <title>TOEIC Master - Luyện Thi Listening & Reading & Mock Test</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <!-- Vue 3 CDN -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
 
@@ -81,7 +81,7 @@
                         </div>
                         <div>
                             <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">TOEIC Master</span>
-                            <span class="hidden sm:inline-block text-xs font-semibold px-2 py-0.5 ml-2 bg-blue-100 text-blue-700 rounded-full">L&R Practice</span>
+                            <span class="hidden sm:inline-block text-xs font-semibold px-2 py-0.5 ml-2 bg-blue-100 text-blue-700 rounded-full">ETS Pro</span>
                         </div>
                     </div>
 
@@ -89,6 +89,10 @@
                     <nav class="hidden md:flex space-x-1 lg:space-x-2">
                         <button @click="activeTab = 'dashboard'" :class="navBtnClass('dashboard')" class="px-3 py-2 rounded-lg font-medium text-sm transition flex items-center gap-2">
                             <i class="fa-solid fa-chart-pie"></i> Tổng Quan
+                        </button>
+                        <button @click="activeTab = 'mocktest'" :class="navBtnClass('mocktest')" class="px-3 py-2 rounded-lg font-medium text-sm transition flex items-center gap-2 relative">
+                            <i class="fa-solid fa-stopwatch text-amber-500"></i> Thi Thử
+                            <span class="bg-rose-500 text-white text-[10px] font-bold px-1.5 py-0.2 rounded-full uppercase">Hot</span>
                         </button>
                         <button @click="activeTab = 'listening'" :class="navBtnClass('listening')" class="px-3 py-2 rounded-lg font-medium text-sm transition flex items-center gap-2">
                             <i class="fa-solid fa-headphones"></i> Luyện Nghe
@@ -103,12 +107,11 @@
 
                     <!-- Header Quick Controls -->
                     <div class="flex items-center space-x-3">
-                        <!-- Timer Toggle Button -->
-                        <button @click="toggleTimer" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-semibold transition" :class="isTimerRunning ? 'bg-amber-50 text-amber-700 border-amber-300' : 'bg-slate-100 text-slate-700 border-slate-300 hover:bg-slate-200'">
-                            <i class="fa-solid fa-clock text-sm"></i>
+                        <!-- Free Study Timer -->
+                        <div v-if="activeTab !== 'mocktest'" class="flex items-center gap-2 px-3 py-1.5 rounded-lg border text-xs font-semibold bg-slate-100 text-slate-700 border-slate-300">
+                            <i class="fa-solid fa-clock text-blue-600"></i>
                             <span>{{ formatTime(timerSeconds) }}</span>
-                            <i class="fa-solid" :class="isTimerRunning ? 'fa-pause' : 'fa-play'"></i>
-                        </button>
+                        </div>
 
                         <!-- Mobile Menu Button -->
                         <button @click="mobileMenuOpen = !mobileMenuOpen" class="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100">
@@ -121,7 +124,10 @@
             <!-- Mobile Menu Dropdown -->
             <div v-if="mobileMenuOpen" class="md:hidden bg-white border-b border-slate-200 px-4 pt-2 pb-4 space-y-1">
                 <button @click="selectTabMobile('dashboard')" class="w-full text-left px-3 py-2.5 rounded-lg font-medium text-sm flex items-center gap-3" :class="activeTab==='dashboard' ? 'bg-blue-50 text-blue-600' : 'text-slate-600'">
-                    <i class="fa-solid fa-chart-pie w-5"></i> Tổng Quan & Tiến Độ
+                    <i class="fa-solid fa-chart-pie w-5"></i> Tổng Quan & Lịch Sử
+                </button>
+                <button @click="selectTabMobile('mocktest')" class="w-full text-left px-3 py-2.5 rounded-lg font-medium text-sm flex items-center gap-3" :class="activeTab==='mocktest' ? 'bg-blue-50 text-blue-600' : 'text-slate-600'">
+                    <i class="fa-solid fa-stopwatch text-amber-500 w-5"></i> Thi Thử (Mock Test)
                 </button>
                 <button @click="selectTabMobile('listening')" class="w-full text-left px-3 py-2.5 rounded-lg font-medium text-sm flex items-center gap-3" :class="activeTab==='listening' ? 'bg-blue-50 text-blue-600' : 'text-slate-600'">
                     <i class="fa-solid fa-headphones w-5"></i> Luyện Nghe (Part 1 - 4)
@@ -144,17 +150,20 @@
                 <div class="bg-gradient-to-r from-blue-600 via-indigo-600 to-blue-800 rounded-2xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden">
                     <div class="absolute -right-10 -bottom-10 opacity-10 text-9xl font-extrabold select-none">TOEIC</div>
                     <div class="relative z-10 max-w-2xl">
-                        <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-semibold backdrop-blur-md uppercase tracking-wider">Lộ trình mục tiêu</span>
-                        <h1 class="text-2xl sm:text-3xl font-extrabold mt-3">Chào bạn! Hãy cùng nâng cấp điểm TOEIC hôm nay.</h1>
+                        <span class="px-3 py-1 bg-white/20 rounded-full text-xs font-semibold backdrop-blur-md uppercase tracking-wider">Hệ thống luyện thi ETS chuẩn</span>
+                        <h1 class="text-2xl sm:text-3xl font-extrabold mt-3">Chào bạn! Đã sẵn sàng chinh phục mục tiêu TOEIC?</h1>
                         <p class="text-blue-100 text-sm sm:text-base mt-2">
-                            Ứng dụng phân tích kỹ lưỡng các dạng bài thi Nghe & Đọc, giúp bạn cải thiện phản xạ từ vựng và chiến thuật làm bài chuẩn xác.
+                            Luyện tập theo từng Part hoặc làm bài Thi thử (Mock Test) có bấm giờ áp lực như thi thật để kiểm tra chính xác trình độ hiện tại.
                         </p>
                         <div class="flex flex-wrap gap-3 mt-6">
-                            <button @click="activeTab = 'listening'" class="px-5 py-2.5 bg-white text-blue-700 font-bold rounded-xl shadow hover:bg-blue-50 transition text-sm flex items-center gap-2">
-                                <i class="fa-solid fa-headphones"></i> Luyện Nghe Ngay
+                            <button @click="activeTab = 'mocktest'" class="px-5 py-2.5 bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold rounded-xl shadow hover:shadow-lg transition text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-play"></i> Thi Thử Ngay (30 Phút)
+                            </button>
+                            <button @click="activeTab = 'listening'" class="px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold rounded-xl backdrop-blur-md transition text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-headphones"></i> Luyện Nghe
                             </button>
                             <button @click="activeTab = 'reading'" class="px-5 py-2.5 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold rounded-xl backdrop-blur-md transition text-sm flex items-center gap-2">
-                                <i class="fa-solid fa-book-open"></i> Luyện Đọc Ngay
+                                <i class="fa-solid fa-book-open"></i> Luyện Đọc
                             </button>
                         </div>
                     </div>
@@ -168,7 +177,7 @@
                             <i class="fa-solid fa-list-check"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-500 font-medium">Câu đã hoàn thành</p>
+                            <p class="text-xs text-slate-500 font-medium">Tổng câu luyện tập</p>
                             <h3 class="text-2xl font-bold text-slate-800">{{ stats.totalDone }} <span class="text-xs font-normal text-slate-400">câu</span></h3>
                         </div>
                     </div>
@@ -179,131 +188,623 @@
                             <i class="fa-solid fa-bullseye"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-500 font-medium">Tỷ lệ chính xác</p>
+                            <p class="text-xs text-slate-500 font-medium">Tỷ lệ đúng luyện tập</p>
                             <h3 class="text-2xl font-bold text-slate-800">{{ overallAccuracy }}%</h3>
                         </div>
                     </div>
 
-                    <!-- Estimated Listening Score -->
+                    <!-- Latest Mock Test Score -->
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
-                        <div class="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-headphones text-lg"></i>
+                        <div class="w-12 h-12 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center text-xl font-bold">
+                            <i class="fa-solid fa-trophy"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-500 font-medium">Điểm ước tính Listening</p>
-                            <h3 class="text-2xl font-bold text-indigo-600">{{ estimatedListeningScore }} <span class="text-xs text-slate-400 font-normal">/ 495</span></h3>
+                            <p class="text-xs text-slate-500 font-medium">Điểm thi thử gần nhất</p>
+                            <h3 class="text-2xl font-bold text-amber-600">
+                                {{ latestMockScore ? latestMockScore.totalScore : 'Chưa thi' }}
+                                <span v-if="latestMockScore" class="text-xs text-slate-400 font-normal">/ 990</span>
+                            </h3>
                         </div>
                     </div>
 
-                    <!-- Estimated Reading Score -->
+                    <!-- Vocabulary Count -->
                     <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center space-x-4">
                         <div class="w-12 h-12 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center text-xl font-bold">
-                            <i class="fa-solid fa-book text-lg"></i>
+                            <i class="fa-solid fa-bookmark"></i>
                         </div>
                         <div>
-                            <p class="text-xs text-slate-500 font-medium">Điểm ước tính Reading</p>
-                            <h3 class="text-2xl font-bold text-purple-600">{{ estimatedReadingScore }} <span class="text-xs text-slate-400 font-normal">/ 495</span></h3>
+                            <p class="text-xs text-slate-500 font-medium">Từ vựng đã lưu</p>
+                            <h3 class="text-2xl font-bold text-purple-600">{{ vocabList.length }} <span class="text-xs text-slate-400 font-normal">từ</span></h3>
                         </div>
                     </div>
                 </div>
 
-                <!-- Skill Breakdown & Daily Target -->
+                <!-- Mock Test History Table & Skill Breakdown -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <!-- Progress by Skill -->
-                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-5">
-                        <div class="flex justify-between items-center border-b border-slate-100 pb-4">
+                    <!-- Mock Test History -->
+                    <div class="lg:col-span-2 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <div class="flex justify-between items-center border-b border-slate-100 pb-3">
                             <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2">
-                                <i class="fa-solid fa-chart-simple text-blue-600"></i> Thống Kê Chi Tiết Kỹ Năng
+                                <i class="fa-solid fa-clock-rotate-left text-amber-500"></i> Lịch Sử Thi Thử
                             </h2>
-                            <button @click="resetStats" class="text-xs text-rose-500 hover:text-rose-700 font-medium flex items-center gap-1">
-                                <i class="fa-solid fa-rotate-right"></i> Đặt lại dữ liệu
+                            <button v-if="testHistory.length > 0" @click="clearTestHistory" class="text-xs text-rose-500 hover:underline">
+                                Xóa lịch sử
                             </button>
                         </div>
 
+                        <div v-if="testHistory.length === 0" class="py-10 text-center text-slate-400">
+                            <i class="fa-solid fa-clipboard-list text-4xl mb-2 opacity-50"></i>
+                            <p class="text-sm">Bạn chưa thực hiện bài thi thử nào.</p>
+                            <button @click="activeTab = 'mocktest'" class="mt-3 px-4 py-2 bg-blue-600 text-white rounded-xl text-xs font-bold shadow hover:bg-blue-700">
+                                Làm bài thi thử đầu tiên
+                            </button>
+                        </div>
+
+                        <div v-else class="space-y-3">
+                            <div v-for="(item, idx) in testHistory" :key="idx" class="p-4 rounded-xl border border-slate-200 hover:border-blue-300 transition flex items-center justify-between bg-slate-50/50">
+                                <div class="flex items-center space-x-4">
+                                    <div class="w-12 h-12 rounded-xl flex items-center justify-center font-extrabold text-lg text-white" :class="item.totalScore >= 700 ? 'bg-emerald-500' : (item.totalScore >= 500 ? 'bg-blue-600' : 'bg-amber-500')">
+                                        {{ item.totalScore }}
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-slate-800 text-sm flex items-center gap-2">
+                                            <span>{{ item.testName }}</span>
+                                            <span class="text-xs px-2 py-0.5 rounded bg-slate-200 text-slate-700 font-medium">{{ item.date }}</span>
+                                        </div>
+                                        <div class="text-xs text-slate-500 mt-1 flex gap-3">
+                                            <span><i class="fa-solid fa-headphones text-blue-500"></i> L: <strong>{{ item.listeningScore }}</strong>/495</span>
+                                            <span><i class="fa-solid fa-book-open text-purple-500"></i> R: <strong>{{ item.readingScore }}</strong>/495</span>
+                                            <span><i class="fa-solid fa-stopwatch text-slate-400"></i> {{ formatTime(item.timeSpentSeconds) }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <button @click="reviewPastTest(item)" class="px-3 py-1.5 bg-white border border-slate-300 hover:bg-slate-100 text-slate-700 text-xs font-bold rounded-lg transition">
+                                    Xem lại
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Practice Progress breakdown -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between space-y-4">
+                        <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-3">
+                            <i class="fa-solid fa-chart-simple text-blue-600"></i> Tiến Độ Từng Kỹ Năng
+                        </h2>
+
                         <!-- Listening Stats Bar -->
                         <div class="space-y-2">
-                            <div class="flex justify-between text-sm font-semibold">
-                                <span class="text-slate-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-headphones text-blue-500"></i> Listening (Kỹ Năng Nghe)
+                            <div class="flex justify-between text-xs font-semibold">
+                                <span class="text-slate-700 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-headphones text-blue-500"></i> Listening
                                 </span>
-                                <span class="text-slate-600">{{ stats.listeningCorrect }} / {{ stats.listeningTotal }} đúng ({{ listeningAccuracy }}%)</span>
+                                <span class="text-slate-600">{{ stats.listeningCorrect }}/{{ stats.listeningTotal }} ({{ listeningAccuracy }}%)</span>
                             </div>
-                            <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
                                 <div class="h-full bg-blue-500 rounded-full transition-all duration-500" :style="{ width: listeningAccuracy + '%' }"></div>
                             </div>
                         </div>
 
                         <!-- Reading Stats Bar -->
                         <div class="space-y-2">
-                            <div class="flex justify-between text-sm font-semibold">
-                                <span class="text-slate-700 flex items-center gap-2">
-                                    <i class="fa-solid fa-book-open text-purple-500"></i> Reading (Kỹ Năng Đọc)
+                            <div class="flex justify-between text-xs font-semibold">
+                                <span class="text-slate-700 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-book-open text-purple-500"></i> Reading
                                 </span>
-                                <span class="text-slate-600">{{ stats.readingCorrect }} / {{ stats.readingTotal }} đúng ({{ readingAccuracy }}%)</span>
+                                <span class="text-slate-600">{{ stats.readingCorrect }}/{{ stats.readingTotal }} ({{ readingAccuracy }}%)</span>
                             </div>
-                            <div class="w-full h-3 bg-slate-100 rounded-full overflow-hidden">
+                            <div class="w-full h-2.5 bg-slate-100 rounded-full overflow-hidden">
                                 <div class="h-full bg-purple-500 rounded-full transition-all duration-500" :style="{ width: readingAccuracy + '%' }"></div>
                             </div>
                         </div>
 
-                        <!-- Recommendations list -->
-                        <div class="mt-6 p-4 bg-slate-50 rounded-xl border border-slate-200/80">
-                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Gợi ý chiến thuật học tập:</h4>
-                            <ul class="text-xs sm:text-sm text-slate-600 space-y-1.5 list-disc list-inside">
-                                <li v-if="listeningAccuracy < 60"><b>Kỹ năng Nghe:</b> Tăng cường nghe Part 1 & Part 2 với tốc độ 0.75x để nắm bắt từ khóa và phát âm nối âm.</li>
-                                <li v-else><b>Kỹ năng Nghe:</b> Giữ phong độ và thử luyện Part 3 & Part 4 ở tốc độ 1.25x để làm quen áp lực thi thật.</li>
-                                <li v-if="readingAccuracy < 60"><b>Kỹ năng Đọc:</b> Ôn tập ngữ pháp câu đơn (Part 5) và lưu từ vựng chuyên ngành công sở vào Sổ tay.</li>
-                                <li v-else><b>Kỹ năng Đọc:</b> Rèn luyện kỹ năng Skimming & Scanning cho bài đọc dài Part 7 để tối ưu thời gian.</li>
-                            </ul>
-                        </div>
-                    </div>
-
-                    <!-- Daily Goal Card -->
-                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between">
-                        <div>
-                            <h2 class="text-lg font-bold text-slate-800 flex items-center gap-2 border-b border-slate-100 pb-4">
-                                <i class="fa-solid fa-fire text-amber-500"></i> Mục Tiêu Hôm Nay
-                            </h2>
-                            <div class="mt-4 space-y-4">
-                                <div class="p-3 bg-amber-50 border border-amber-200/60 rounded-xl flex items-center justify-between">
-                                    <div>
-                                        <div class="text-xs text-amber-700 font-bold">Luyện Nghe Part 1 - 4</div>
-                                        <div class="text-xs text-amber-600">Hoàn thành ít nhất 5 câu</div>
-                                    </div>
-                                    <span class="text-sm font-bold" :class="stats.listeningTotal >= 5 ? 'text-emerald-600' : 'text-slate-400'">
-                                        {{ stats.listeningTotal }}/5 <i class="fa-solid" :class="stats.listeningTotal >= 5 ? 'fa-circle-check' : 'fa-circle-dot'"></i>
-                                    </span>
-                                </div>
-
-                                <div class="p-3 bg-purple-50 border border-purple-200/60 rounded-xl flex items-center justify-between">
-                                    <div>
-                                        <div class="text-xs text-purple-700 font-bold">Luyện Đọc Part 5 - 7</div>
-                                        <div class="text-xs text-purple-600">Hoàn thành ít nhất 5 câu</div>
-                                    </div>
-                                    <span class="text-sm font-bold" :class="stats.readingTotal >= 5 ? 'text-emerald-600' : 'text-slate-400'">
-                                        {{ stats.readingTotal }}/5 <i class="fa-solid" :class="stats.readingTotal >= 5 ? 'fa-circle-check' : 'fa-circle-dot'"></i>
-                                    </span>
-                                </div>
-
-                                <div class="p-3 bg-blue-50 border border-blue-200/60 rounded-xl flex items-center justify-between">
-                                    <div>
-                                        <div class="text-xs text-blue-700 font-bold">Sổ Từ Vựng</div>
-                                        <div class="text-xs text-blue-600">Lưu trữ từ mới khi làm bài</div>
-                                    </div>
-                                    <span class="text-sm font-bold text-blue-700">{{ vocabList.length }} từ</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 pt-4 border-t border-slate-100 text-center">
-                            <span class="text-xs text-slate-500">Mô phỏng bám sát cấu trúc đề TOEIC ETS mới nhất</span>
+                        <!-- Advice Box -->
+                        <div class="p-3.5 bg-blue-50 rounded-xl border border-blue-100 text-xs text-blue-900 leading-relaxed">
+                            <strong><i class="fa-solid fa-lightbulb text-amber-500"></i> Mẹo ôn luyện:</strong>
+                            <p class="mt-1">Hãy thực hiện Mini Test 30 phút mỗi 3-5 ngày để đánh giá khả năng quản lý thời gian và phản xạ dưới áp lực thi thực tế.</p>
                         </div>
                     </div>
                 </div>
             </section>
 
 
-            <!-- TAB 2: LUYỆN NGHE (LISTENING PART 1 - 4) -->
+            <!-- TAB 2: CHẾ ĐỘ THI THỬ (MOCK TEST MODULE) -->
+            <section v-if="activeTab === 'mocktest'" class="space-y-6">
+
+                <!-- 1. TEST SETUP SCREEN -->
+                <div v-if="mockState === 'setup'" class="max-w-4xl mx-auto bg-white rounded-3xl border border-slate-200 shadow-lg p-6 sm:p-10 space-y-8">
+                    <div class="text-center space-y-3">
+                        <span class="px-3.5 py-1.5 bg-amber-100 text-amber-800 rounded-full text-xs font-extrabold uppercase tracking-wider">
+                            <i class="fa-solid fa-award mr-1"></i> Thi Thử Mô Phỏng Chuẩn ETS
+                        </span>
+                        <h2 class="text-2xl sm:text-3xl font-extrabold text-slate-900">Chọn Chế Độ Thi Thử TOEIC</h2>
+                        <p class="text-slate-600 text-sm max-w-xl mx-auto">
+                            Hệ thống mô phỏng đúng định dạng bài thi chuẩn với đồng hồ đếm ngược, phiếu trả lời trắc nghiệm, và tự động quy đổi thang điểm TOEIC 990.
+                        </p>
+                    </div>
+
+                    <!-- Test Options Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <!-- Mini Test Card -->
+                        <div @click="selectedTestType = 'mini'"
+                            :class="selectedTestType === 'mini' ? 'border-amber-500 bg-amber-50/40 ring-2 ring-amber-400' : 'border-slate-200 bg-white hover:border-slate-300'"
+                            class="p-6 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between space-y-4 shadow-sm">
+                            <div>
+                                <div class="w-12 h-12 rounded-2xl bg-amber-500 text-white flex items-center justify-center text-xl font-bold mb-4 shadow">
+                                    <i class="fa-solid fa-bolt"></i>
+                                </div>
+                                <h3 class="font-extrabold text-slate-900 text-lg">Mini Test Đầy Đủ</h3>
+                                <p class="text-xs text-slate-500 mt-1">25 câu tổng hợp từ Part 1 đến Part 7.</p>
+                                <ul class="mt-4 text-xs text-slate-600 space-y-1.5">
+                                    <li><i class="fa-solid fa-clock text-amber-600 mr-1.5"></i>Thời gian: <strong>30 Phút</strong></li>
+                                    <li><i class="fa-solid fa-layer-group text-amber-600 mr-1.5"></i>Part 1 - 7 (Nghe & Đọc)</li>
+                                    <li><i class="fa-solid fa-chart-line text-amber-600 mr-1.5"></i>Ước tính điểm 990</li>
+                                </ul>
+                            </div>
+                            <span class="text-xs font-bold text-amber-700 text-center block">Khuyên dùng cho ôn tập hàng ngày</span>
+                        </div>
+
+                        <!-- Listening Test Card -->
+                        <div @click="selectedTestType = 'listening'"
+                            :class="selectedTestType === 'listening' ? 'border-blue-500 bg-blue-50/40 ring-2 ring-blue-400' : 'border-slate-200 bg-white hover:border-slate-300'"
+                            class="p-6 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between space-y-4 shadow-sm">
+                            <div>
+                                <div class="w-12 h-12 rounded-2xl bg-blue-600 text-white flex items-center justify-center text-xl font-bold mb-4 shadow">
+                                    <i class="fa-solid fa-headphones"></i>
+                                </div>
+                                <h3 class="font-extrabold text-slate-900 text-lg">Thi Thử Nghe (Listening)</h3>
+                                <p class="text-xs text-slate-500 mt-1">Tập trung rèn phản xạ và tốc độ nghe.</p>
+                                <ul class="mt-4 text-xs text-slate-600 space-y-1.5">
+                                    <li><i class="fa-solid fa-clock text-blue-600 mr-1.5"></i>Thời gian: <strong>20 Phút</strong></li>
+                                    <li><i class="fa-solid fa-volume-high text-blue-600 mr-1.5"></i>Part 1, 2, 3, 4 (12 câu)</li>
+                                    <li><i class="fa-solid fa-sliders text-blue-600 mr-1.5"></i>Ẩn kịch bản khi làm bài</li>
+                                </ul>
+                            </div>
+                            <span class="text-xs font-bold text-blue-700 text-center block">Cải thiện phản xạ tai nghe</span>
+                        </div>
+
+                        <!-- Reading Test Card -->
+                        <div @click="selectedTestType = 'reading'"
+                            :class="selectedTestType === 'reading' ? 'border-purple-500 bg-purple-50/40 ring-2 ring-purple-400' : 'border-slate-200 bg-white hover:border-slate-300'"
+                            class="p-6 rounded-2xl border-2 transition cursor-pointer flex flex-col justify-between space-y-4 shadow-sm">
+                            <div>
+                                <div class="w-12 h-12 rounded-2xl bg-purple-600 text-white flex items-center justify-center text-xl font-bold mb-4 shadow">
+                                    <i class="fa-solid fa-book-open"></i>
+                                </div>
+                                <h3 class="font-extrabold text-slate-900 text-lg">Thi Thử Đọc (Reading)</h3>
+                                <p class="text-xs text-slate-500 mt-1">Rèn luyện tốc độ đọc hiểu & từ vựng.</p>
+                                <ul class="mt-4 text-xs text-slate-600 space-y-1.5">
+                                    <li><i class="fa-solid fa-clock text-purple-600 mr-1.5"></i>Thời gian: <strong>25 Phút</strong></li>
+                                    <li><i class="fa-solid fa-file-lines text-purple-600 mr-1.5"></i>Part 5, 6, 7 (13 câu)</li>
+                                    <li><i class="fa-solid fa-table-columns text-purple-600 mr-1.5"></i>Giao diện 2 cột chuẩn Part 7</li>
+                                </ul>
+                            </div>
+                            <span class="text-xs font-bold text-purple-700 text-center block">Rèn sức bền đọc hiểu</span>
+                        </div>
+                    </div>
+
+                    <!-- Rules Banner -->
+                    <div class="p-4 bg-slate-50 rounded-2xl border border-slate-200 text-xs text-slate-600 space-y-2">
+                        <h4 class="font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5">
+                            <i class="fa-solid fa-triangle-exclamation text-amber-500"></i> Quy định thi thử:
+                        </h4>
+                        <ul class="list-disc list-inside space-y-1">
+                            <li>Bài thi sẽ tự động nộp khi hết thời gian đếm ngược.</li>
+                            <li>Trong lúc làm bài phần Nghe (Listening), transcript và đáp án chi tiết bị ẩn hoàn toàn.</li>
+                            <li>Bạn có thể đánh dấu cờ (<i class="fa-solid fa-flag text-amber-500"></i>) các câu nghi vấn để kiểm tra lại trước khi nộp bài.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Start Button -->
+                    <div class="text-center pt-2">
+                        <button @click="startMockTest" class="px-10 py-4 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-900 font-extrabold text-base rounded-2xl shadow-lg hover:shadow-xl transition transform active:scale-95 flex items-center justify-center gap-3 mx-auto">
+                            <i class="fa-solid fa-play text-lg"></i> BẮT ĐẦU THI THỬ NGAY
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. TEST TAKING SCREEN (DURING TEST) -->
+                <div v-if="mockState === 'taking'" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    
+                    <!-- Main Question View (Left 3 cols on desktop) -->
+                    <div class="lg:col-span-3 space-y-6">
+                        
+                        <!-- Top Active Bar: Timer & Progress -->
+                        <div class="bg-slate-900 text-white p-4 rounded-2xl shadow-md flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <span class="px-2.5 py-1 bg-amber-500 text-slate-900 font-extrabold rounded-lg text-xs uppercase">
+                                    {{ getTestTitle(selectedTestType) }}
+                                </span>
+                                <span class="text-xs text-slate-300 font-medium hidden sm:inline">
+                                    Câu {{ currentTestIndex + 1 }} / {{ activeTestQuestions.length }}
+                                </span>
+                            </div>
+
+                            <!-- Countdown Clock -->
+                            <div class="flex items-center space-x-3">
+                                <div class="flex items-center gap-2 px-3.5 py-1.5 bg-slate-800 rounded-xl border border-slate-700 text-amber-400 font-mono font-bold text-base">
+                                    <i class="fa-solid fa-stopwatch text-amber-400"></i>
+                                    <span>{{ formatTime(testTimerSeconds) }}</span>
+                                </div>
+                                <button @click="showConfirmSubmitModal = true" class="px-4 py-2 bg-rose-600 hover:bg-rose-500 text-white font-bold text-xs rounded-xl shadow transition">
+                                    Nộp Bài
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Current Question Panel -->
+                        <div v-if="activeTestQuestion" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+                            
+                            <!-- Header & Flag Button -->
+                            <div class="flex items-center justify-between border-b border-slate-100 pb-4">
+                                <div class="flex items-center gap-2">
+                                    <span class="px-2.5 py-1 bg-blue-100 text-blue-700 font-bold text-xs rounded-md">
+                                        Part {{ activeTestQuestion.part }} - {{ getPartName(activeTestQuestion.part) }}
+                                    </span>
+                                    <span class="text-xs text-slate-400 font-medium">ID: {{ activeTestQuestion.id }}</span>
+                                </div>
+                                <button @click="toggleFlag(activeTestQuestion.id)"
+                                    :class="testFlags[activeTestQuestion.id] ? 'bg-amber-100 text-amber-700 border-amber-300' : 'bg-slate-100 text-slate-500 border-slate-200 hover:bg-slate-200'"
+                                    class="px-3 py-1.5 rounded-lg border text-xs font-bold transition flex items-center gap-1.5">
+                                    <i class="fa-solid fa-flag" :class="testFlags[activeTestQuestion.id] ? 'text-amber-500' : 'text-slate-400'"></i>
+                                    <span>{{ testFlags[activeTestQuestion.id] ? 'Đã cờ' : 'Đánh dấu cờ' }}</span>
+                                </button>
+                            </div>
+
+                            <!-- Listening Audio Controls (Parts 1-4) -->
+                            <div v-if="activeTestQuestion.part <= 4" class="p-4 bg-slate-900 text-white rounded-2xl flex items-center justify-between gap-4">
+                                <div class="flex items-center gap-3">
+                                    <button @click="playMockAudio" class="w-12 h-12 rounded-full bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center text-lg transition shadow">
+                                        <i class="fa-solid" :class="isPlayingMockAudio ? 'fa-pause' : 'fa-play'"></i>
+                                    </button>
+                                    <div>
+                                        <div class="font-bold text-sm text-slate-100">
+                                            {{ isPlayingMockAudio ? 'Đang phát file âm thanh thi...' : 'Nhấn để nghe câu hỏi' }}
+                                        </div>
+                                        <div class="text-xs text-slate-400">Speech Synthesis • {{ testAudioSpeed }}x</div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center gap-2">
+                                    <select v-model="testAudioSpeed" class="bg-slate-800 text-slate-200 border border-slate-700 rounded px-2 py-1 text-xs focus:outline-none">
+                                        <option :value="0.75">0.75x</option>
+                                        <option :value="1.0">1.0x (Chuẩn)</option>
+                                        <option :value="1.25">1.25x</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <!-- Part 1 Image -->
+                            <div v-if="activeTestQuestion.image" class="max-w-md mx-auto rounded-xl overflow-hidden border border-slate-200 shadow-sm">
+                                <img :src="activeTestQuestion.image" alt="Part 1 Image" class="w-full h-60 object-cover">
+                            </div>
+
+                            <!-- Part 3/4 Context / Part 6/7 Passage View -->
+                            <div v-if="activeTestQuestion.passage" class="p-4 bg-slate-50 border border-slate-200 rounded-xl font-serif text-sm leading-relaxed text-slate-800 whitespace-pre-line max-h-64 overflow-y-auto">
+                                <div class="font-sans text-xs font-bold text-purple-600 uppercase mb-1">{{ activeTestQuestion.passageTitle || 'Đoạn văn đọc' }}</div>
+                                {{ activeTestQuestion.passage }}
+                            </div>
+
+                            <!-- Question Prompt Text -->
+                            <div class="text-base font-bold text-slate-900 leading-snug">
+                                <span class="text-blue-600 mr-2">Câu {{ currentTestIndex + 1 }}.</span>
+                                <span v-if="activeTestQuestion.questionSentence" v-html="formatQuestionSentence(activeTestQuestion.questionSentence)"></span>
+                                <span v-else>{{ activeTestQuestion.title || 'Lắng nghe các phương án và chọn câu trả lời đúng:' }}</span>
+                            </div>
+
+                            <!-- Answer Options -->
+                            <div class="space-y-3">
+                                <div v-for="(optText, optKey) in activeTestQuestion.options" :key="optKey"
+                                    @click="selectMockAnswer(activeTestQuestion.id, optKey)"
+                                    :class="testAnswers[activeTestQuestion.id] === optKey ? 'bg-blue-50 border-blue-600 ring-1 ring-blue-500' : 'bg-white border-slate-200 hover:border-slate-300'"
+                                    class="p-4 rounded-xl border-2 transition cursor-pointer flex items-center space-x-3">
+                                    <span class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm border"
+                                        :class="testAnswers[activeTestQuestion.id] === optKey ? 'bg-blue-600 text-white border-blue-600' : 'bg-slate-100 text-slate-700 border-slate-300'">
+                                        {{ optKey }}
+                                    </span>
+                                    <span class="text-sm font-medium text-slate-800">
+                                        <template v-if="activeTestQuestion.part >= 3 || optText.length > 5">
+                                            {{ optText }}
+                                        </template>
+                                        <template v-else>
+                                            <span class="italic text-slate-400">(Tùy chọn {{ optKey }})</span>
+                                        </template>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Footer Navigation Buttons -->
+                            <div class="flex items-center justify-between pt-4 border-t border-slate-100">
+                                <button @click="prevMockQuestion" :disabled="currentTestIndex === 0" class="px-4 py-2 rounded-xl text-xs font-bold bg-slate-100 text-slate-700 disabled:opacity-40 hover:bg-slate-200">
+                                    <i class="fa-solid fa-arrow-left mr-1"></i> Câu trước
+                                </button>
+                                <span class="text-xs text-slate-400 font-semibold hidden sm:inline">Dùng Answer Sheet bên phải để chuyển nhanh</span>
+                                <button @click="nextMockQuestion" :disabled="currentTestIndex === activeTestQuestions.length - 1" class="px-5 py-2 rounded-xl text-xs font-bold bg-blue-600 text-white disabled:opacity-40 hover:bg-blue-700 shadow">
+                                    Câu tiếp <i class="fa-solid fa-arrow-right ml-1"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Right Column: Answer Sheet Navigator (Phiếu Trắc Nghiệm) -->
+                    <div class="space-y-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4 sticky top-20">
+                            <div class="flex justify-between items-center border-b border-slate-100 pb-3">
+                                <h3 class="font-extrabold text-slate-800 text-sm flex items-center gap-1.5">
+                                    <i class="fa-solid fa-border-all text-blue-600"></i> Phiếu Trắc Nghiệm
+                                </h3>
+                                <span class="text-xs font-bold px-2 py-0.5 bg-blue-50 text-blue-700 rounded-md">
+                                    {{ answeredCount }} / {{ activeTestQuestions.length }} đã làm
+                                </span>
+                            </div>
+
+                            <!-- Legend -->
+                            <div class="grid grid-cols-2 gap-2 text-[11px] text-slate-600">
+                                <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-blue-600"></span> Đã làm</div>
+                                <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-slate-200"></span> Chưa làm</div>
+                                <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded bg-amber-400"></span> Đã gắn cờ</div>
+                                <div class="flex items-center gap-1.5"><span class="w-3 h-3 rounded border-2 border-blue-600"></span> Đang xem</div>
+                            </div>
+
+                            <!-- Question Grid Buttons -->
+                            <div class="grid grid-cols-5 gap-2 max-h-80 overflow-y-auto pt-2 pr-1">
+                                <button v-for="(q, idx) in activeTestQuestions" :key="q.id"
+                                    @click="currentTestIndex = idx"
+                                    :class="[
+                                        currentTestIndex === idx ? 'ring-2 ring-blue-600 ring-offset-1 font-extrabold' : '',
+                                        testAnswers[q.id] ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200',
+                                        testFlags[q.id] ? 'relative border-2 border-amber-400' : ''
+                                    ]"
+                                    class="h-9 rounded-xl text-xs font-bold transition flex items-center justify-center relative">
+                                    <span>{{ idx + 1 }}</span>
+                                    <i v-if="testFlags[q.id]" class="fa-solid fa-flag text-[9px] text-amber-400 absolute top-0.5 right-0.5"></i>
+                                </button>
+                            </div>
+
+                            <!-- Action Buttons -->
+                            <div class="pt-3 border-t border-slate-100 space-y-2">
+                                <button @click="showConfirmSubmitModal = true" class="w-full py-3 bg-rose-600 hover:bg-rose-700 text-white font-extrabold text-xs rounded-xl shadow transition flex items-center justify-center gap-2">
+                                    <i class="fa-solid fa-paper-plane"></i> NỘP BÀI THI THỬ
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. TEST RESULT SCREEN (POST-SUBMIT ANALYSIS) -->
+                <div v-if="mockState === 'result'" class="max-w-4xl mx-auto space-y-6">
+                    <!-- Score Banner -->
+                    <div class="bg-gradient-to-r from-slate-900 via-indigo-950 to-slate-900 rounded-3xl p-6 sm:p-10 text-white shadow-xl text-center space-y-6 relative overflow-hidden">
+                        <span class="px-4 py-1.5 bg-amber-400/20 text-amber-300 border border-amber-400/30 rounded-full text-xs font-extrabold uppercase tracking-wider">
+                            Kết Quả Thi Thử {{ getTestTitle(selectedTestType) }}
+                        </span>
+
+                        <div class="space-y-2">
+                            <div class="text-5xl sm:text-7xl font-black text-amber-400 tracking-tight">
+                                {{ lastTestResult.totalScore }} <span class="text-xl sm:text-2xl text-slate-400 font-normal">/ 990</span>
+                            </div>
+                            <p class="text-slate-300 text-sm sm:text-base font-semibold">
+                                Trình độ tương đương: <strong class="text-white">{{ lastTestResult.levelAssessment }}</strong>
+                            </p>
+                        </div>
+
+                        <!-- Score Sub-cards -->
+                        <div class="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-xl mx-auto pt-2">
+                            <div class="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/10">
+                                <div class="text-xs text-blue-300 font-semibold"><i class="fa-solid fa-headphones mr-1"></i>Listening</div>
+                                <div class="text-xl font-bold text-white mt-1">{{ lastTestResult.listeningScore }} / 495</div>
+                            </div>
+                            <div class="bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/10">
+                                <div class="text-xs text-purple-300 font-semibold"><i class="fa-solid fa-book-open mr-1"></i>Reading</div>
+                                <div class="text-xl font-bold text-white mt-1">{{ lastTestResult.readingScore }} / 495</div>
+                            </div>
+                            <div class="col-span-2 sm:col-span-1 bg-white/10 backdrop-blur-md p-3.5 rounded-2xl border border-white/10">
+                                <div class="text-xs text-amber-300 font-semibold"><i class="fa-solid fa-clock mr-1"></i>Thời gian</div>
+                                <div class="text-xl font-bold text-white mt-1">{{ formatTime(lastTestResult.timeSpentSeconds) }}</div>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex flex-wrap items-center justify-center gap-3 pt-4">
+                            <button @click="startReviewMode" class="px-6 py-3 bg-amber-400 hover:bg-amber-300 text-slate-900 font-extrabold rounded-xl shadow transition text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-eye"></i> Xem Chi Tiết Đáp Án & Lời Giải
+                            </button>
+                            <button @click="mockState = 'setup'" class="px-5 py-3 bg-white/10 hover:bg-white/20 border border-white/30 text-white font-bold rounded-xl transition text-sm flex items-center gap-2">
+                                <i class="fa-solid fa-rotate-right"></i> Thi Bài Khác
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Breakdown per Part -->
+                    <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4">
+                        <h3 class="font-extrabold text-slate-800 text-base flex items-center gap-2 border-b pb-3">
+                            <i class="fa-solid fa-chart-pie text-blue-600"></i> Phân Tích Độ Chính Xác Theo Từng Part
+                        </h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div v-for="(stat, partNum) in lastTestResult.partBreakdown" :key="partNum" class="p-3.5 bg-slate-50 rounded-xl border border-slate-200 space-y-1.5">
+                                <div class="flex justify-between text-xs font-bold">
+                                    <span class="text-slate-700">Part {{ partNum }}: {{ getPartName(partNum) }}</span>
+                                    <span :class="stat.accuracy >= 70 ? 'text-emerald-600' : 'text-amber-600'">
+                                        {{ stat.correct }} / {{ stat.total }} ({{ stat.accuracy }}%)
+                                    </span>
+                                </div>
+                                <div class="w-full h-2 bg-slate-200 rounded-full overflow-hidden">
+                                    <div class="h-full rounded-full transition-all duration-500" :class="stat.accuracy >= 70 ? 'bg-emerald-500' : 'bg-amber-500'" :style="{ width: stat.accuracy + '%' }"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. DETAILED REVIEW MODE (POST-RESULT) -->
+                <div v-if="mockState === 'review'" class="grid grid-cols-1 lg:grid-cols-4 gap-6">
+                    <div class="lg:col-span-3 space-y-6">
+                        <!-- Review Header -->
+                        <div class="bg-slate-900 text-white p-4 rounded-2xl shadow flex items-center justify-between">
+                            <div class="flex items-center space-x-3">
+                                <span class="px-3 py-1 bg-amber-400 text-slate-900 font-extrabold text-xs rounded-lg uppercase">Review Mode</span>
+                                <span class="text-xs text-slate-300 font-bold">Câu {{ currentTestIndex + 1 }} / {{ activeTestQuestions.length }}</span>
+                            </div>
+                            <button @click="mockState = 'result'" class="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg border border-slate-700">
+                                Quay lại bảng điểm
+                            </button>
+                        </div>
+
+                        <!-- Question Detail Box with Answers & Transcript -->
+                        <div v-if="activeTestQuestion" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
+                            
+                            <!-- Header Status -->
+                            <div class="flex items-center justify-between border-b pb-4">
+                                <span class="px-2.5 py-1 bg-blue-100 text-blue-700 font-bold text-xs rounded-md">
+                                    Part {{ activeTestQuestion.part }} - {{ getPartName(activeTestQuestion.part) }}
+                                </span>
+                                <span class="text-xs font-bold px-3 py-1 rounded-full"
+                                    :class="testAnswers[activeTestQuestion.id] === activeTestQuestion.correctAnswer ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
+                                    <i class="fa-solid" :class="testAnswers[activeTestQuestion.id] === activeTestQuestion.correctAnswer ? 'fa-check' : 'fa-xmark'"></i>
+                                    {{ testAnswers[activeTestQuestion.id] === activeTestQuestion.correctAnswer ? 'Đúng (+10đ)' : 'Chưa đúng' }}
+                                </span>
+                            </div>
+
+                            <!-- Audio Play Button in Review -->
+                            <div v-if="activeTestQuestion.part <= 4" class="p-4 bg-slate-900 text-white rounded-2xl flex items-center justify-between">
+                                <div class="flex items-center gap-3">
+                                    <button @click="playMockAudio" class="w-10 h-10 rounded-full bg-blue-600 text-white flex items-center justify-center">
+                                        <i class="fa-solid" :class="isPlayingMockAudio ? 'fa-pause' : 'fa-play'"></i>
+                                    </button>
+                                    <span class="text-xs font-bold text-slate-200">Nghe lại audio câu hỏi này</span>
+                                </div>
+                            </div>
+
+                            <!-- Part 1 Image -->
+                            <div v-if="activeTestQuestion.image" class="max-w-md mx-auto rounded-xl overflow-hidden border">
+                                <img :src="activeTestQuestion.image" class="w-full h-56 object-cover">
+                            </div>
+
+                            <!-- Passage -->
+                            <div v-if="activeTestQuestion.passage" class="p-4 bg-slate-50 border rounded-xl font-serif text-sm leading-relaxed whitespace-pre-line">
+                                {{ activeTestQuestion.passage }}
+                            </div>
+
+                            <!-- Question Sentence -->
+                            <div class="text-base font-bold text-slate-900">
+                                <span class="text-blue-600">Câu {{ currentTestIndex + 1 }}.</span>
+                                <span v-if="activeTestQuestion.questionSentence" v-html="formatQuestionSentence(activeTestQuestion.questionSentence)"></span>
+                                <span v-else>{{ activeTestQuestion.title }}</span>
+                            </div>
+
+                            <!-- Options Review -->
+                            <div class="space-y-3">
+                                <div v-for="(optText, optKey) in activeTestQuestion.options" :key="optKey"
+                                    :class="getReviewOptionClass(activeTestQuestion, optKey)"
+                                    class="p-4 rounded-xl border-2 transition flex items-center justify-between">
+                                    <div class="flex items-center space-x-3">
+                                        <span class="w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm border"
+                                            :class="optKey === activeTestQuestion.correctAnswer ? 'bg-emerald-600 text-white border-emerald-600' : (testAnswers[activeTestQuestion.id] === optKey ? 'bg-rose-500 text-white border-rose-500' : 'bg-slate-100 text-slate-700')">
+                                            {{ optKey }}
+                                        </span>
+                                        <span class="text-sm font-medium text-slate-800">{{ optText }}</span>
+                                    </div>
+                                    <div>
+                                        <i v-if="optKey === activeTestQuestion.correctAnswer" class="fa-solid fa-circle-check text-emerald-500 text-lg"></i>
+                                        <i v-else-if="testAnswers[activeTestQuestion.id] === optKey" class="fa-solid fa-circle-xmark text-rose-500 text-lg"></i>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Navigation buttons -->
+                            <div class="flex justify-between pt-2">
+                                <button @click="prevMockQuestion" :disabled="currentTestIndex === 0" class="px-4 py-2 bg-slate-100 text-xs font-bold rounded-xl disabled:opacity-40">Câu trước</button>
+                                <button @click="nextMockQuestion" :disabled="currentTestIndex === activeTestQuestions.length - 1" class="px-4 py-2 bg-blue-600 text-white text-xs font-bold rounded-xl disabled:opacity-40">Câu tiếp</button>
+                            </div>
+
+                            <!-- UNLOCKED TRANSCRIPT & EXPLANATION -->
+                            <div class="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
+                                <h4 class="font-bold text-slate-800 text-sm flex items-center gap-2 border-b pb-2">
+                                    <i class="fa-solid fa-lightbulb text-amber-500"></i> Lời Giải Chi Tiết & Kịch Bản Audio
+                                </h4>
+
+                                <!-- Transcript if listening -->
+                                <div v-if="activeTestQuestion.transcript" class="space-y-2 text-xs">
+                                    <div v-for="(line, idx) in activeTestQuestion.transcript" :key="idx" class="p-2.5 bg-white rounded-lg border">
+                                        <div class="font-bold text-blue-600">{{ line.speaker }}: {{ line.text }}</div>
+                                        <div class="text-slate-500 italic mt-0.5">{{ line.translation }}</div>
+                                    </div>
+                                </div>
+
+                                <!-- Sentence translation if reading -->
+                                <div v-if="activeTestQuestion.translation" class="p-3 bg-white rounded-lg border text-xs text-slate-700">
+                                    <strong>Dịch nghĩa:</strong> {{ activeTestQuestion.translation }}
+                                </div>
+
+                                <!-- Key Vocab with Save button -->
+                                <div v-if="activeTestQuestion.keyVocab" class="flex flex-wrap gap-2 pt-1">
+                                    <div v-for="v in activeTestQuestion.keyVocab" :key="v.word" class="bg-white px-3 py-1.5 rounded-lg border text-xs flex items-center gap-2">
+                                        <span class="font-bold text-purple-600">{{ v.word }}</span>
+                                        <span class="text-slate-400">({{ v.type }}):</span>
+                                        <span class="text-slate-700">{{ v.meaning }}</span>
+                                        <button @click="addToVocab(v.word, v.meaning, v.type, activeTestQuestion.title)" class="text-blue-500 hover:text-blue-700" title="Lưu từ vựng">
+                                            <i class="fa-solid fa-plus-circle"></i>
+                                        </button>
+                                    </div>
+                                </div>
+
+                                <!-- Analysis note -->
+                                <p class="text-xs text-slate-700 leading-relaxed bg-amber-50/70 p-3 rounded-lg border border-amber-200">
+                                    <strong>Phân tích:</strong> {{ activeTestQuestion.explanation }}
+                                </p>
+                            </div>
+
+                        </div>
+                    </div>
+
+                    <!-- Right Column Navigator in Review Mode -->
+                    <div class="space-y-4">
+                        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-4 sticky top-20">
+                            <h3 class="font-extrabold text-slate-800 text-sm border-b pb-2">Danh Sách Câu Hỏi Review</h3>
+                            <div class="grid grid-cols-5 gap-2 max-h-96 overflow-y-auto">
+                                <button v-for="(q, idx) in activeTestQuestions" :key="q.id"
+                                    @click="currentTestIndex = idx"
+                                    :class="[
+                                        currentTestIndex === idx ? 'ring-2 ring-blue-600 ring-offset-1 font-extrabold' : '',
+                                        testAnswers[q.id] === q.correctAnswer ? 'bg-emerald-500 text-white' : (testAnswers[q.id] ? 'bg-rose-500 text-white' : 'bg-slate-200 text-slate-600')
+                                    ]"
+                                    class="h-9 rounded-xl text-xs font-bold transition flex items-center justify-center">
+                                    {{ idx + 1 }}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- SUBMIT CONFIRMATION MODAL -->
+                <div v-if="showConfirmSubmitModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4">
+                    <div class="bg-white rounded-3xl max-w-md w-full p-6 space-y-5 shadow-2xl text-center">
+                        <div class="w-16 h-16 rounded-full bg-amber-100 text-amber-600 flex items-center justify-center text-2xl font-bold mx-auto">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-extrabold text-slate-900">Xác Nhận Nộp Bài Thi Thử</h3>
+                            <p class="text-xs text-slate-500 mt-2">
+                                Bạn đã hoàn thành <strong>{{ answeredCount }} / {{ activeTestQuestions.length }}</strong> câu hỏi.
+                                <span v-if="answeredCount < activeTestQuestions.length" class="text-rose-500 block font-bold mt-1">
+                                    Còn {{ activeTestQuestions.length - answeredCount }} câu chưa có đáp án!
+                                </span>
+                            </p>
+                        </div>
+                        <div class="flex items-center gap-3 pt-2">
+                            <button @click="showConfirmSubmitModal = false" class="w-1/2 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl">
+                                Tiếp tục làm bài
+                            </button>
+                            <button @click="finishMockTest" class="w-1/2 py-2.5 bg-rose-600 hover:bg-rose-700 text-white font-bold text-xs rounded-xl shadow">
+                                Đồng ý nộp bài
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+
+            <!-- TAB 3: LUYỆN NGHE (LISTENING PART 1 - 4) -->
             <section v-if="activeTab === 'listening'" class="space-y-6">
                 <!-- Listening Part Switcher -->
                 <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
@@ -333,7 +834,6 @@
 
                 <!-- Current Question Box -->
                 <div v-if="currentListeningQuestion" class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-                    <!-- Question Header & Audio Player Control -->
                     <div class="bg-slate-900 text-white p-5 sm:p-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
                         <div>
                             <span class="px-2.5 py-1 bg-blue-500/30 text-blue-300 border border-blue-400/30 rounded-lg text-xs font-bold uppercase tracking-wider">
@@ -344,7 +844,7 @@
                             </h2>
                         </div>
 
-                        <!-- Simulated Audio Player Controls -->
+                        <!-- Audio Player Controls -->
                         <div class="flex items-center gap-3 bg-slate-800 p-3 rounded-xl border border-slate-700 self-start md:self-auto">
                             <button @click="playListeningAudio" class="w-10 h-10 rounded-full bg-blue-600 hover:bg-blue-500 text-white flex items-center justify-center transition shadow">
                                 <i class="fa-solid text-sm" :class="isPlayingAudio ? 'fa-pause' : 'fa-play'"></i>
@@ -360,18 +860,14 @@
 
                     <!-- Question Content Area -->
                     <div class="p-6 space-y-6">
-                        
-                        <!-- Image Container for Part 1 -->
                         <div v-if="currentListeningQuestion.image" class="max-w-md mx-auto rounded-xl overflow-hidden border border-slate-200 shadow-sm">
                             <img :src="currentListeningQuestion.image" alt="TOEIC Part 1 Image" class="w-full h-64 object-cover">
                         </div>
 
-                        <!-- Context Text (Part 3 & 4 hint) -->
                         <div v-if="currentListeningQuestion.context" class="p-4 bg-slate-50 rounded-xl border border-slate-200 text-sm text-slate-600 italic">
                             <i class="fa-solid fa-circle-info text-blue-500 mr-2"></i> {{ currentListeningQuestion.context }}
                         </div>
 
-                        <!-- Options List -->
                         <div class="space-y-3 max-w-2xl">
                             <div v-for="(opt, key) in currentListeningQuestion.options" :key="key"
                                 @click="selectListeningAnswer(key)"
@@ -383,7 +879,6 @@
                                         {{ key }}
                                     </span>
                                     <span class="text-sm font-medium text-slate-800">
-                                        <!-- Show text if submitted or if Part 3/4 where choices are written -->
                                         <template v-if="listeningSubmitted[currentListeningQuestion.id] || listeningPart >= 3">
                                             {{ opt }}
                                         </template>
@@ -401,37 +896,26 @@
 
                         <!-- Action Buttons -->
                         <div class="flex items-center justify-between pt-4 border-t border-slate-100">
-                            <button @click="prevListening" :disabled="currentListeningIndex === 0"
-                                class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed">
+                            <button @click="prevListening" :disabled="currentListeningIndex === 0" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40">
                                 <i class="fa-solid fa-arrow-left mr-1"></i> Câu trước
                             </button>
-
-                            <button v-if="!listeningSubmitted[currentListeningQuestion.id]" @click="submitListeningAnswer"
-                                :disabled="!listeningUserAnswers[currentListeningQuestion.id]"
-                                class="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md disabled:opacity-50">
+                            <button v-if="!listeningSubmitted[currentListeningQuestion.id]" @click="submitListeningAnswer" :disabled="!listeningUserAnswers[currentListeningQuestion.id]" class="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md disabled:opacity-50">
                                 Kiểm tra đáp án
                             </button>
-
-                            <button @click="nextListening" :disabled="currentListeningIndex === currentListeningList.length - 1"
-                                class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 disabled:opacity-40 disabled:cursor-not-allowed">
+                            <button @click="nextListening" :disabled="currentListeningIndex === currentListeningList.length - 1" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-blue-50 hover:bg-blue-100 text-blue-700 disabled:opacity-40">
                                 Câu tiếp <i class="fa-solid fa-arrow-right ml-1"></i>
                             </button>
                         </div>
 
-                        <!-- TRANSCRIPT & DETAILED EXPLANATION (Revealed after answer submission) -->
+                        <!-- Transcript & Explanation -->
                         <div v-if="listeningSubmitted[currentListeningQuestion.id]" class="mt-6 p-5 sm:p-6 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
-                            <div class="flex items-center justify-between border-b border-slate-200 pb-3">
+                            <div class="flex items-center justify-between border-b pb-3">
                                 <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                                    <i class="fa-solid fa-file-audio text-blue-600"></i> Kịch bản Audio (Transcript) & Bản dịch
+                                    <i class="fa-solid fa-file-audio text-blue-600"></i> Kịch bản Audio & Bản dịch
                                 </h3>
-                                <span class="text-xs px-2.5 py-1 font-bold rounded-md" :class="listeningUserAnswers[currentListeningQuestion.id] === currentListeningQuestion.correctAnswer ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
-                                    {{ listeningUserAnswers[currentListeningQuestion.id] === currentListeningQuestion.correctAnswer ? 'Chính xác! +10đ' : 'Chưa đúng' }}
-                                </span>
                             </div>
-
-                            <!-- Script Details -->
                             <div class="space-y-3 text-xs sm:text-sm">
-                                <div v-for="(line, idx) in currentListeningQuestion.transcript" :key="idx" class="p-3 bg-white rounded-xl border border-slate-200/80">
+                                <div v-for="(line, idx) in currentListeningQuestion.transcript" :key="idx" class="p-3 bg-white rounded-xl border">
                                     <div class="font-semibold text-slate-800 flex items-center gap-2">
                                         <span class="text-blue-600 font-bold">{{ line.speaker }}:</span>
                                         <span>{{ line.text }}</span>
@@ -441,23 +925,19 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Key Vocabulary in Question -->
                             <div class="mt-4">
                                 <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Từ vựng quan trọng:</h4>
                                 <div class="flex flex-wrap gap-2">
-                                    <div v-for="vocab in currentListeningQuestion.keyVocab" :key="vocab.word" class="bg-white px-3 py-1.5 rounded-lg border border-slate-200 text-xs flex items-center gap-2">
+                                    <div v-for="vocab in currentListeningQuestion.keyVocab" :key="vocab.word" class="bg-white px-3 py-1.5 rounded-lg border text-xs flex items-center gap-2">
                                         <span class="font-bold text-blue-600">{{ vocab.word }}</span>
                                         <span class="text-slate-400">({{ vocab.type }}):</span>
                                         <span class="text-slate-700 font-medium">{{ vocab.meaning }}</span>
-                                        <button @click="addToVocab(vocab.word, vocab.meaning, vocab.type, currentListeningQuestion.title)" class="text-blue-500 hover:text-blue-700 ml-1" title="Lưu vào Sổ từ vựng">
+                                        <button @click="addToVocab(vocab.word, vocab.meaning, vocab.type, currentListeningQuestion.title)" class="text-blue-500 hover:text-blue-700 ml-1">
                                             <i class="fa-solid fa-plus-circle"></i>
                                         </button>
                                     </div>
                                 </div>
                             </div>
-
-                            <!-- Explanation Notes -->
                             <div class="p-3 bg-blue-50/60 rounded-xl border border-blue-100 text-xs text-blue-900 leading-relaxed">
                                 <strong><i class="fa-solid fa-lightbulb text-amber-500"></i> Phân tích đáp án:</strong>
                                 {{ currentListeningQuestion.explanation }}
@@ -469,7 +949,7 @@
             </section>
 
 
-            <!-- TAB 3: LUYỆN ĐỌC (READING PART 5 - 7) -->
+            <!-- TAB 4: LUYỆN ĐỌC (READING PART 5 - 7) -->
             <section v-if="activeTab === 'reading'" class="space-y-6">
                 <!-- Reading Part Switcher -->
                 <div class="flex flex-wrap items-center justify-between gap-3 bg-white p-4 rounded-2xl border border-slate-200 shadow-sm">
@@ -487,30 +967,26 @@
                     </div>
                 </div>
 
-                <!-- Part 5 & Part 6 Layout (Single Column / Standard Box) -->
+                <!-- Part 5 & 6 Box -->
                 <div v-if="readingPart === 5 || readingPart === 6" class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-6">
                     <div class="border-b border-slate-100 pb-4">
                         <span class="px-2.5 py-1 bg-purple-100 text-purple-700 rounded-lg text-xs font-bold uppercase tracking-wider">
                             TOEIC Reading - Part {{ readingPart }}
                         </span>
                         <h2 class="text-lg font-bold mt-2 text-slate-800">
-                            Câu {{ currentReadingIndex + 1 }}: {{ currentReadingQuestion.passageTitle || 'Chọn đáp án thích hợp nhất để hoàn thành câu/đoạn' }}
+                            Câu {{ currentReadingIndex + 1 }}: {{ currentReadingQuestion.passageTitle || 'Chọn đáp án thích hợp nhất' }}
                         </h2>
                     </div>
 
-                    <!-- Context Passage for Part 6 -->
-                    <div v-if="currentReadingQuestion.passage" class="p-5 bg-slate-50 rounded-xl border border-slate-200 font-serif text-sm leading-relaxed text-slate-800 space-y-3 whitespace-pre-line">
-                        <div class="font-sans text-xs font-bold text-slate-400 uppercase tracking-wider">Đoạn văn hoàn chỉnh:</div>
+                    <div v-if="currentReadingQuestion.passage" class="p-5 bg-slate-50 rounded-xl border border-slate-200 font-serif text-sm leading-relaxed text-slate-800 whitespace-pre-line">
                         {{ currentReadingQuestion.passage }}
                     </div>
 
-                    <!-- Question Prompt / Fill Sentence -->
                     <div class="text-base font-semibold text-slate-800 bg-slate-50/80 p-4 rounded-xl border border-slate-200/60 leading-relaxed">
                         <i class="fa-solid fa-pen text-purple-500 mr-2"></i>
                         <span v-html="highlightedQuestionSentence"></span>
                     </div>
 
-                    <!-- Options Grid -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div v-for="(opt, key) in currentReadingQuestion.options" :key="key"
                             @click="selectReadingAnswer(key)"
@@ -530,99 +1006,51 @@
                         </div>
                     </div>
 
-                    <!-- Action Controls -->
                     <div class="flex items-center justify-between pt-4 border-t border-slate-100">
-                        <button @click="prevReading" :disabled="currentReadingIndex === 0"
-                            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40">
+                        <button @click="prevReading" :disabled="currentReadingIndex === 0" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 disabled:opacity-40">
                             <i class="fa-solid fa-arrow-left mr-1"></i> Câu trước
                         </button>
-
-                        <button v-if="!readingSubmitted[currentReadingQuestion.id]" @click="submitReadingAnswer"
-                            :disabled="!readingUserAnswers[currentReadingQuestion.id]"
-                            class="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-md disabled:opacity-50">
+                        <button v-if="!readingSubmitted[currentReadingQuestion.id]" @click="submitReadingAnswer" :disabled="!readingUserAnswers[currentReadingQuestion.id]" class="px-6 py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-md disabled:opacity-50">
                             Kiểm tra đáp án
                         </button>
-
-                        <button @click="nextReading" :disabled="currentReadingIndex === currentReadingList.length - 1"
-                            class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-purple-50 hover:bg-purple-100 text-purple-700 disabled:opacity-40">
+                        <button @click="nextReading" :disabled="currentReadingIndex === currentReadingList.length - 1" class="px-4 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-purple-50 hover:bg-purple-100 text-purple-700 disabled:opacity-40">
                             Câu tiếp <i class="fa-solid fa-arrow-right ml-1"></i>
                         </button>
                     </div>
 
-                    <!-- READING EXPLANATION & TRANSLATION -->
                     <div v-if="readingSubmitted[currentReadingQuestion.id]" class="p-5 bg-slate-50 border border-slate-200 rounded-2xl space-y-4">
-                        <div class="flex items-center justify-between border-b border-slate-200 pb-3">
-                            <h3 class="font-bold text-slate-800 text-base flex items-center gap-2">
-                                <i class="fa-solid fa-graduation-cap text-purple-600"></i> Dịch Nghĩa & Phân Tích Chi Tiết
-                            </h3>
-                            <span class="text-xs px-2.5 py-1 font-bold rounded-md" :class="readingUserAnswers[currentReadingQuestion.id] === currentReadingQuestion.correctAnswer ? 'bg-emerald-100 text-emerald-700' : 'bg-rose-100 text-rose-700'">
-                                {{ readingUserAnswers[currentReadingQuestion.id] === currentReadingQuestion.correctAnswer ? 'Chính xác! +10đ' : 'Chưa đúng' }}
-                            </span>
-                        </div>
-
-                        <!-- Sentence Translation -->
                         <div class="p-3 bg-white rounded-xl border border-slate-200">
                             <div class="text-xs font-bold text-slate-400 uppercase">Dịch nghĩa câu hoàn chỉnh:</div>
                             <p class="text-sm text-slate-700 mt-1 font-medium">{{ currentReadingQuestion.translation }}</p>
                         </div>
-
-                        <!-- Key Vocab list -->
-                        <div>
-                            <h4 class="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Từ vựng & Ngữ pháp cốt lõi:</h4>
-                            <div class="flex flex-wrap gap-2">
-                                <div v-for="v in currentReadingQuestion.keyVocab" :key="v.word" class="bg-white px-3 py-1.5 rounded-lg border border-slate-200 text-xs flex items-center gap-2">
-                                    <span class="font-bold text-purple-600">{{ v.word }}</span>
-                                    <span class="text-slate-400">({{ v.type }}):</span>
-                                    <span class="text-slate-700">{{ v.meaning }}</span>
-                                    <button @click="addToVocab(v.word, v.meaning, v.type, currentReadingQuestion.questionSentence)" class="text-purple-500 hover:text-purple-700 ml-1" title="Lưu từ vựng">
-                                        <i class="fa-solid fa-plus-circle"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Analysis -->
                         <div class="p-3 bg-purple-50/60 rounded-xl border border-purple-100 text-xs text-purple-900 leading-relaxed">
-                            <strong><i class="fa-solid fa-lightbulb text-amber-500"></i> Phân tích cú pháp & điểm ngữ pháp:</strong>
+                            <strong><i class="fa-solid fa-lightbulb text-amber-500"></i> Phân tích đáp án:</strong>
                             <p class="mt-1">{{ currentReadingQuestion.explanation }}</p>
                         </div>
                     </div>
                 </div>
 
-                <!-- Part 7 Layout (Split-Screen / 2-Column Desktop View) -->
+                <!-- Part 7 Split View -->
                 <div v-if="readingPart === 7" class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    <!-- Left Column: Reading Passage Article / Email / Notice -->
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col h-[650px]">
-                        <div class="border-b border-slate-100 pb-3 mb-3 flex items-center justify-between">
-                            <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg text-xs font-bold uppercase tracking-wider">
+                        <div class="border-b pb-3 mb-3 flex items-center justify-between">
+                            <span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-lg text-xs font-bold uppercase">
                                 {{ currentReadingQuestion.passageType || 'Bài đọc Part 7' }}
                             </span>
-                            <span class="text-xs text-slate-400">Đọc kỹ để trả lời câu hỏi bên phải</span>
                         </div>
                         <div class="flex-grow overflow-y-auto pr-2 space-y-4 text-slate-800 text-sm leading-relaxed">
                             <h3 class="text-base font-bold text-slate-900 border-b pb-2">{{ currentReadingQuestion.passageTitle }}</h3>
-                            <div class="whitespace-pre-line font-serif text-slate-700 bg-slate-50 p-4 rounded-xl border border-slate-200/80">
+                            <div class="whitespace-pre-line font-serif text-slate-700 bg-slate-50 p-4 rounded-xl border">
                                 {{ currentReadingQuestion.passage }}
                             </div>
                         </div>
                     </div>
 
-                    <!-- Right Column: Question & Answer Choices -->
                     <div class="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between h-[650px] overflow-y-auto">
                         <div class="space-y-4">
-                            <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
-                                <h3 class="font-bold text-slate-800 text-sm">Câu hỏi Part 7 ({{ currentReadingIndex + 1 }}/{{ currentReadingList.length }})</h3>
-                                <div class="flex gap-1">
-                                    <button @click="prevReading" :disabled="currentReadingIndex === 0" class="px-2.5 py-1 rounded bg-slate-100 text-xs font-bold disabled:opacity-40">Quay lại</button>
-                                    <button @click="nextReading" :disabled="currentReadingIndex === currentReadingList.length - 1" class="px-2.5 py-1 rounded bg-purple-100 text-purple-700 text-xs font-bold disabled:opacity-40">Tiếp theo</button>
-                                </div>
-                            </div>
-
                             <p class="font-bold text-slate-900 text-base">
                                 {{ currentReadingQuestion.questionSentence }}
                             </p>
-
-                            <!-- Choices -->
                             <div class="space-y-2.5">
                                 <div v-for="(opt, key) in currentReadingQuestion.options" :key="key"
                                     @click="selectReadingAnswer(key)"
@@ -641,39 +1069,23 @@
                                     </div>
                                 </div>
                             </div>
-
-                            <button v-if="!readingSubmitted[currentReadingQuestion.id]" @click="submitReadingAnswer"
-                                :disabled="!readingUserAnswers[currentReadingQuestion.id]"
-                                class="w-full py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-purple-600 hover:bg-purple-700 text-white shadow-md disabled:opacity-50">
+                            <button v-if="!readingSubmitted[currentReadingQuestion.id]" @click="submitReadingAnswer" :disabled="!readingUserAnswers[currentReadingQuestion.id]" class="w-full py-2.5 rounded-xl text-xs sm:text-sm font-bold bg-purple-600 text-white shadow">
                                 Kiểm tra đáp án
                             </button>
-
-                            <!-- Explanation revealed -->
-                            <div v-if="readingSubmitted[currentReadingQuestion.id]" class="mt-4 p-4 bg-slate-50 border border-slate-200 rounded-xl space-y-3 text-xs">
-                                <div class="font-bold text-slate-800 border-b pb-2 flex justify-between">
-                                    <span>Giải thích chi tiết Part 7</span>
-                                    <span class="text-purple-600 font-bold">Đáp án đúng: {{ currentReadingQuestion.correctAnswer }}</span>
-                                </div>
-                                <p class="text-slate-700 leading-relaxed">{{ currentReadingQuestion.explanation }}</p>
-                                <div class="p-2.5 bg-white rounded border border-slate-200 text-slate-600 italic">
-                                    <strong>Dịch nghĩa câu hỏi:</strong> {{ currentReadingQuestion.translation }}
-                                </div>
-                            </div>
                         </div>
                     </div>
                 </div>
             </section>
 
 
-            <!-- TAB 4: SỔ TAY TỪ VỰNG & FLASHCARDS -->
+            <!-- TAB 5: SỔ TAY TỪ VỰNG & FLASHCARDS -->
             <section v-if="activeTab === 'vocabulary'" class="space-y-6">
-                <!-- Header & Flashcard Mode Switcher -->
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
                     <div>
                         <h2 class="text-xl font-bold text-slate-800 flex items-center gap-2">
                             <i class="fa-solid fa-bookmark text-blue-600"></i> Sổ Tay Từ Vựng TOEIC
                         </h2>
-                        <p class="text-xs text-slate-500 mt-1">Lưu trữ từ vựng mới trong quá trình làm bài luyện thi và ôn tập bằng Flashcards.</p>
+                        <p class="text-xs text-slate-500 mt-1">Lưu trữ từ vựng mới và ôn tập bằng Flashcards 3D.</p>
                     </div>
 
                     <div class="flex items-center gap-2">
@@ -686,12 +1098,12 @@
                     </div>
                 </div>
 
-                <!-- Add New Word Box -->
+                <!-- Add Word -->
                 <div class="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-center gap-3">
                     <input v-model="newWord.word" placeholder="Từ tiếng Anh (vd: Implement)" class="w-full sm:w-1/4 px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-blue-500">
-                    <input v-model="newWord.meaning" placeholder="Nghĩa tiếng Việt (vd: Thực thi, áp dụng)" class="w-full sm:w-1/3 px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-blue-500">
+                    <input v-model="newWord.meaning" placeholder="Nghĩa tiếng Việt (vd: Thực thi)" class="w-full sm:w-1/3 px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-blue-500">
                     <input v-model="newWord.type" placeholder="Loại từ (v, n, adj)" class="w-full sm:w-1/6 px-3 py-2 border border-slate-300 rounded-xl text-xs focus:outline-none focus:border-blue-500">
-                    <button @click="addManualWord" class="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl transition flex items-center justify-center gap-1">
+                    <button @click="addManualWord" class="w-full sm:w-auto px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs rounded-xl shadow transition">
                         <i class="fa-solid fa-plus"></i> Thêm từ mới
                     </button>
                 </div>
@@ -705,11 +1117,7 @@
                                 <span class="text-xs px-2 py-0.5 bg-slate-100 text-slate-600 rounded font-semibold">{{ item.type || 'n/a' }}</span>
                             </div>
                             <div class="text-sm font-semibold text-slate-800 mt-2">{{ item.meaning }}</div>
-                            <div v-if="item.context" class="text-xs text-slate-500 italic mt-2 bg-slate-50 p-2 rounded-lg border border-slate-100">
-                                "{{ item.context }}"
-                            </div>
                         </div>
-
                         <div class="mt-4 pt-3 border-t border-slate-100 flex items-center justify-between text-xs">
                             <button @click="speakSingleWord(item.word)" class="text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1">
                                 <i class="fa-solid fa-volume-high"></i> Phát âm
@@ -719,70 +1127,36 @@
                             </button>
                         </div>
                     </div>
-
-                    <div v-if="vocabList.length === 0" class="col-span-full py-12 text-center text-slate-400">
-                        <i class="fa-solid fa-folder-open text-4xl mb-2"></i>
-                        <p class="text-sm">Chưa có từ vựng nào trong sổ tay. Hãy lưu từ trong các bài luyện thi!</p>
-                    </div>
                 </div>
 
                 <!-- FLASHCARD MODE -->
                 <div v-if="vocabViewMode === 'flashcard' && vocabList.length > 0" class="max-w-md mx-auto space-y-6">
-                    <div class="text-center text-xs text-slate-500 font-bold uppercase tracking-wider">
+                    <div class="text-center text-xs text-slate-500 font-bold uppercase">
                         Thẻ {{ currentFlashcardIndex + 1 }} / {{ vocabList.length }}
                     </div>
-
-                    <!-- 3D Card Container -->
                     <div @click="isCardFlipped = !isCardFlipped" class="w-full h-72 perspective-1000 cursor-pointer">
                         <div class="relative w-full h-full transition-transform duration-500 transform-style-3d shadow-xl rounded-3xl" :class="{ 'rotate-y-180': isCardFlipped }">
-                            
-                            <!-- Front of Card (English Word) -->
                             <div class="absolute w-full h-full backface-hidden bg-gradient-to-tr from-blue-600 to-indigo-700 text-white rounded-3xl p-8 flex flex-col justify-between items-center text-center">
                                 <div class="w-full flex justify-between items-center text-xs opacity-80">
                                     <span>TOEIC Flashcard</span>
-                                    <button @click.stop="speakSingleWord(currentFlashcard.word)" class="p-2 hover:bg-white/20 rounded-full">
-                                        <i class="fa-solid fa-volume-high text-lg"></i>
-                                    </button>
+                                    <button @click.stop="speakSingleWord(currentFlashcard.word)"><i class="fa-solid fa-volume-high text-lg"></i></button>
                                 </div>
                                 <div>
                                     <h3 class="text-3xl font-extrabold tracking-wide">{{ currentFlashcard.word }}</h3>
-                                    <span class="inline-block mt-2 px-3 py-1 bg-white/20 rounded-full text-xs font-semibold">
-                                        {{ currentFlashcard.type || 'Vocabulary' }}
-                                    </span>
+                                    <span class="inline-block mt-2 px-3 py-1 bg-white/20 rounded-full text-xs font-semibold">{{ currentFlashcard.type || 'Vocabulary' }}</span>
                                 </div>
-                                <div class="text-xs opacity-70 flex items-center gap-1">
-                                    <i class="fa-solid fa-rotate"></i> Nhấn để xem nghĩa tiếng Việt
-                                </div>
+                                <div class="text-xs opacity-70"><i class="fa-solid fa-rotate"></i> Nhấn để lật thẻ</div>
                             </div>
-
-                            <!-- Back of Card (Vietnamese Meaning) -->
                             <div class="absolute w-full h-full backface-hidden rotate-y-180 bg-white border-2 border-blue-500 rounded-3xl p-8 flex flex-col justify-between items-center text-center text-slate-800">
-                                <div class="text-xs font-bold text-blue-600 uppercase tracking-wider">Bản Dịch & Ngữ Cảnh</div>
-                                <div>
-                                    <h3 class="text-2xl font-bold text-slate-900">{{ currentFlashcard.meaning }}</h3>
-                                    <p v-if="currentFlashcard.context" class="text-xs text-slate-500 italic mt-3 bg-slate-50 p-2.5 rounded-xl border border-slate-200">
-                                        "{{ currentFlashcard.context }}"
-                                    </p>
-                                </div>
-                                <div class="text-xs text-slate-400 flex items-center gap-1">
-                                    <i class="fa-solid fa-rotate"></i> Nhấn để lật lại mặt trước
-                                </div>
+                                <div class="text-xs font-bold text-blue-600 uppercase">Bản Dịch</div>
+                                <h3 class="text-2xl font-bold text-slate-900">{{ currentFlashcard.meaning }}</h3>
+                                <div class="text-xs text-slate-400"><i class="fa-solid fa-rotate"></i> Nhấn để lật lại</div>
                             </div>
-
                         </div>
                     </div>
-
-                    <!-- Flashcard Navigation Buttons -->
                     <div class="flex items-center justify-between px-4">
-                        <button @click="prevFlashcard" class="px-5 py-2.5 bg-slate-200 hover:bg-slate-300 rounded-xl text-xs font-bold text-slate-700">
-                            <i class="fa-solid fa-arrow-left mr-1"></i> Từ trước
-                        </button>
-                        <button @click="speakSingleWord(currentFlashcard.word)" class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold">
-                            <i class="fa-solid fa-volume-high"></i>
-                        </button>
-                        <button @click="nextFlashcard" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-700 rounded-xl text-xs font-bold text-white shadow">
-                            Từ tiếp <i class="fa-solid fa-arrow-right ml-1"></i>
-                        </button>
+                        <button @click="prevFlashcard" class="px-5 py-2.5 bg-slate-200 rounded-xl text-xs font-bold text-slate-700">Từ trước</button>
+                        <button @click="nextFlashcard" class="px-5 py-2.5 bg-blue-600 rounded-xl text-xs font-bold text-white shadow">Từ tiếp</button>
                     </div>
                 </div>
             </section>
@@ -792,8 +1166,8 @@
         <!-- FOOTER -->
         <footer class="bg-white border-t border-slate-200 py-6 mt-12 text-center text-xs text-slate-500">
             <div class="max-w-7xl mx-auto px-4">
-                <p class="font-semibold text-slate-600">TOEIC Master Practice App - Kỹ năng Listening & Reading</p>
-                <p class="mt-1">Thiết kế tối ưu cho học viên luyện thi TOEIC ETS Việt Nam • Dữ liệu tự động lưu vào trình duyệt</p>
+                <p class="font-semibold text-slate-600">TOEIC Master Practice & Mock Test Application</p>
+                <p class="mt-1">Mô phỏng bài thi TOEIC chuẩn ETS Việt Nam • Dữ liệu lưu trữ trình duyệt</p>
             </div>
         </footer>
 
@@ -809,12 +1183,11 @@
                     activeTab: 'dashboard',
                     mobileMenuOpen: false,
 
-                    // Timer State
+                    // Free Study Timer State
                     timerSeconds: 0,
                     timerInterval: null,
-                    isTimerRunning: false,
 
-                    // User Statistics (saved to localStorage)
+                    // Saved Stats & History
                     stats: {
                         totalDone: 0,
                         listeningCorrect: 0,
@@ -822,8 +1195,29 @@
                         readingCorrect: 0,
                         readingTotal: 0
                     },
+                    testHistory: [],
 
-                    // LISTENING MODULE STATE
+                    // MOCK TEST STATE
+                    mockState: 'setup', // 'setup', 'taking', 'result', 'review'
+                    selectedTestType: 'mini', // 'mini', 'listening', 'reading'
+                    testTimerSeconds: 1800,
+                    testTimerInterval: null,
+                    currentTestIndex: 0,
+                    testAnswers: {},
+                    testFlags: {},
+                    isPlayingMockAudio: false,
+                    testAudioSpeed: 1.0,
+                    showConfirmSubmitModal: false,
+                    lastTestResult: {
+                        totalScore: 0,
+                        listeningScore: 0,
+                        readingScore: 0,
+                        timeSpentSeconds: 0,
+                        levelAssessment: '',
+                        partBreakdown: {}
+                    },
+
+                    // PRACTICE MODULE STATES
                     listeningPart: 1,
                     currentListeningIndex: 0,
                     audioSpeed: 1.0,
@@ -832,7 +1226,6 @@
                     listeningUserAnswers: {},
                     listeningSubmitted: {},
 
-                    // READING MODULE STATE
                     readingPart: 5,
                     currentReadingIndex: 0,
                     readingUserAnswers: {},
@@ -845,257 +1238,201 @@
                     currentFlashcardIndex: 0,
                     isCardFlipped: false,
 
-                    // SAMPLE DATA FOR LISTENING (PART 1 - 4)
-                    listeningData: {
-                        1: [
-                            {
-                                id: 'l1_1',
-                                title: 'Mô tả hình ảnh công sở',
-                                image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80',
-                                options: {
-                                    A: '(A) They are working on computers in an office.',
-                                    B: '(A) They are painting a wall.',
-                                    C: '(C) They are cooking meals in a restaurant.',
-                                    D: '(D) They are driving cars on a highway.'
-                                },
-                                correctAnswer: 'A',
-                                transcript: [
-                                    { speaker: 'Audio', text: '(A) They are working on computers in an office.', translation: 'Họ đang làm việc trên máy tính trong một văn phòng.' },
-                                    { speaker: 'Audio', text: '(B) They are painting a wall.', translation: 'Họ đang sơn một bức tường.' },
-                                    { speaker: 'Audio', text: '(C) They are cooking meals in a restaurant.', translation: 'Họ đang nấu các bữa ăn trong nhà hàng.' },
-                                    { speaker: 'Audio', text: '(D) They are driving cars on a highway.', translation: 'Họ đang lái xe trên đường cao tốc.' }
-                                ],
-                                keyVocab: [
-                                    { word: 'office', meaning: 'văn phòng', type: 'n' },
-                                    { word: 'computer', meaning: 'máy tính', type: 'n' }
-                                ],
-                                explanation: 'Bức ảnh thể hiện nhóm nhân viên ngồi quanh bàn làm việc với máy tính xách tay. Đáp án (A) mô tả chính xác nhất hành động.'
-                            },
-                            {
-                                id: 'l1_2',
-                                title: 'Mô tả phòng họp / thảo luận',
-                                image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80',
-                                options: {
-                                    A: '(A) A man is giving a presentation to a group.',
-                                    B: '(B) Someone is repairing a projector.',
-                                    C: '(C) The chairs are stacked against the wall.',
-                                    D: '(D) The room is completely empty.'
-                                },
-                                correctAnswer: 'A',
-                                transcript: [
-                                    { speaker: 'Audio', text: '(A) A man is giving a presentation to a group.', translation: 'Một người đàn ông đang thuyết trình cho một nhóm người.' },
-                                    { speaker: 'Audio', text: '(B) Someone is repairing a projector.', translation: 'Ai đó đang sửa máy chiếu.' },
-                                    { speaker: 'Audio', text: '(C) The chairs are stacked against the wall.', translation: 'Gần như các ghế được xếp chồng vào tường.' },
-                                    { speaker: 'Audio', text: '(D) The room is completely empty.', translation: 'Căn phòng hoàn toàn trống rỗng.' }
-                                ],
-                                keyVocab: [
-                                    { word: 'presentation', meaning: 'bài thuyết trình', type: 'n' },
-                                    { word: 'give a presentation', meaning: 'thực hiện thuyết trình', type: 'phrase' }
-                                ],
-                                explanation: 'Người đàn ông đứng phát biểu trước nhóm đồng nghiệp. Đáp án (A) miêu tả chuẩn xác hành động "giving a presentation".'
-                            }
-                        ],
-                        2: [
-                            {
-                                id: 'l2_1',
-                                title: 'Hỏi & Đáp (Question-Response)',
-                                context: 'Nghe câu hỏi và chọn câu phản hồi phù hợp nhất trong 3 đáp án (A, B, C).',
-                                options: {
-                                    A: 'At two o\'clock in Meeting Room B.',
-                                    B: 'Yes, I submitted the report yesterday.',
-                                    C: 'By taking the train.'
-                                },
-                                correctAnswer: 'A',
-                                transcript: [
-                                    { speaker: 'Question', text: 'When is the marketing strategy meeting scheduled to start?', translation: 'Cuộc họp chiến lược tiếp thị dự kiến bắt đầu khi nào?' },
-                                    { speaker: 'Option A', text: 'At two o\'clock in Meeting Room B.', translation: 'Vào lúc 2 giờ tại Phòng họp B.' },
-                                    { speaker: 'Option B', text: 'Yes, I submitted the report yesterday.', translation: 'Vâng, tôi đã nộp báo cáo ngày hôm qua.' },
-                                    { speaker: 'Option C', text: 'By taking the train.', translation: 'Bằng cách đi tàu hỏa.' }
-                                ],
-                                keyVocab: [
-                                    { word: 'schedule', meaning: 'lên lịch trình', type: 'v/n' },
-                                    { word: 'strategy', meaning: 'chiến lược', type: 'n' }
-                                ],
-                                explanation: 'Câu hỏi bắt đầu bằng từ nghi vấn "When" (Khi nào). Đáp án (A) trả lời mốc thời gian "At two o\'clock" là chính xác.'
-                            },
-                            {
-                                id: 'l2_2',
-                                title: 'Hỏi vị trí tài liệu',
-                                context: 'Lắng nghe kỹ từ nghi vấn đầu câu.',
-                                options: {
-                                    A: 'Mr. Davis approved it.',
-                                    B: 'On the top shelf in the filing cabinet.',
-                                    C: 'No, I don\'t need more paper.'
-                                },
-                                correctAnswer: 'B',
-                                transcript: [
-                                    { speaker: 'Question', text: 'Where can I find the quarterly financial reports?', translation: 'Tôi có thể tìm các báo cáo tài chính hàng quý ở đâu?' },
-                                    { speaker: 'Option A', text: 'Mr. Davis approved it.', translation: 'Ông Davis đã phê duyệt nó.' },
-                                    { speaker: 'Option B', text: 'On the top shelf in the filing cabinet.', translation: 'Ở ngăn trên cùng trong tủ hồ sơ.' },
-                                    { speaker: 'Option C', text: 'No, I don\'t need more paper.', translation: 'Không, tôi không cần thêm giấy.' }
-                                ],
-                                keyVocab: [
-                                    { word: 'quarterly', meaning: 'hàng quý (3 tháng)', type: 'adj/adv' },
-                                    { word: 'filing cabinet', meaning: 'tủ đựng hồ sơ', type: 'n' }
-                                ],
-                                explanation: 'Câu hỏi dùng "Where" (Ở đâu). Đáp án (B) chỉ địa điểm "On the top shelf" phù hợp hoàn hảo.'
-                            }
-                        ],
-                        3: [
-                            {
-                                id: 'l3_1',
-                                title: 'Hội thoại đặt mua thiết bị văn phòng',
-                                context: 'Đoạn hội thoại ngắn giữa hai đồng nghiệp tại công ty.',
-                                options: {
-                                    A: 'To ask about a budget proposal',
-                                    B: 'To order additional office supplies',
-                                    C: 'To schedule a client interview',
-                                    D: 'To confirm a flight booking'
-                                },
-                                correctAnswer: 'B',
-                                transcript: [
-                                    { speaker: 'Man', text: 'Hi Sarah, have you sent out the order for the new ergonomic chairs yet?', translation: 'Chào Sarah, bạn đã gửi đơn đặt hàng cho ghế công phu học mới chưa?' },
-                                    { speaker: 'Woman', text: 'Not yet. I am waiting for the manager to approve the revised request form.', translation: 'Chưa. Tôi đang chờ quản lý phê duyệt mẫu yêu cầu đã chỉnh sửa.' },
-                                    { speaker: 'Man', text: 'Okay, please let me know once it is processed because we really need them next week.', translation: 'Được rồi, báo cho tôi biết ngay khi nó được xử lý nhé vì tuần sau chúng ta rất cần.' }
-                                ],
-                                keyVocab: [
-                                    { word: 'approve', meaning: 'phê duyệt, chấp thuận', type: 'v' },
-                                    { word: 'supplies', meaning: 'vật tư, nhu yếu phẩm', type: 'n' },
-                                    { word: 'revise', meaning: 'chỉnh sửa, sửa đổi', type: 'v' }
-                                ],
-                                explanation: 'Trong bài hội thoại, hai người đang nói về "order for the new ergonomic chairs" (đơn đặt hàng ghế mới), thuộc nhóm vật tư văn phòng (office supplies).'
-                            }
-                        ],
-                        4: [
-                            {
-                                id: 'l4_1',
-                                title: 'Thông báo nội bộ về nâng cấp phần mềm',
-                                context: 'Bài nói ngắn dạng thông báo phát thanh trong công ty.',
-                                options: {
-                                    A: 'A company merger',
-                                    B: 'An IT system maintenance',
-                                    C: 'An annual holiday party',
-                                    D: 'A change in office location'
-                                },
-                                correctAnswer: 'B',
-                                transcript: [
-                                    { speaker: 'Speaker', text: 'Attention all staff members. The IT department will conduct routine server maintenance tonight starting at 10 PM. During this time, the company network and email services will be temporarily unavailable. Please make sure to save all your work before leaving.', translation: 'Xin chú ý toàn thể nhân viên. Bộ phận IT sẽ tiến hành bảo trì máy chủ định kỳ vào tối nay bắt đầu lúc 10 giờ đêm. Trong thời gian này, mạng và email công ty sẽ tạm thời ngừng hoạt động. Vui lòng đảm bảo lưu lại công việc trước khi ra về.' }
-                                ],
-                                keyVocab: [
-                                    { word: 'conduct', meaning: 'tiến hành, thực hiện', type: 'v' },
-                                    { word: 'maintenance', meaning: 'sự bảo trì', type: 'n' },
-                                    { word: 'unavailable', meaning: 'không khả dụng, gián đoạn', type: 'adj' }
-                                ],
-                                explanation: 'Bài nói đề cập đến "IT department will conduct routine server maintenance" -> Mục đích thông báo về việc bảo trì hệ thống công nghệ thông tin.'
-                            }
-                        ]
-                    },
+                    // COMPLETE MOCK TEST DATASET (25 ITEMS ACROSS PART 1 - 7)
+                    mockQuestionsPool: [
+                        // PART 1 (2 items)
+                        {
+                            id: 'm_p1_1', part: 1, title: 'Mô tả hình ảnh công sở',
+                            image: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=600&q=80',
+                            options: { A: '(A) They are working on computers in an office.', B: '(B) They are painting a wall.', C: '(C) They are cooking meals.', D: '(D) They are driving cars.' },
+                            correctAnswer: 'A',
+                            transcript: [{ speaker: 'Audio', text: '(A) They are working on computers in an office.', translation: 'Họ đang làm việc trên máy tính trong văn phòng.' }],
+                            explanation: 'Bức ảnh thể hiện nhóm nhân viên làm việc với máy tính.'
+                        },
+                        {
+                            id: 'm_p1_2', part: 1, title: 'Mô tả bài thuyết trình',
+                            image: 'https://images.unsplash.com/photo-1517245386807-bb43f82c33c4?auto=format&fit=crop&w=600&q=80',
+                            options: { A: '(A) A man is giving a presentation to a group.', B: '(B) Someone is repairing a projector.', C: '(C) The chairs are stacked against the wall.', D: '(D) The room is empty.' },
+                            correctAnswer: 'A',
+                            transcript: [{ speaker: 'Audio', text: '(A) A man is giving a presentation to a group.', translation: 'Một người đàn ông đang thuyết trình.' }],
+                            explanation: 'Người đàn ông đứng thuyết trình trước nhóm người.'
+                        },
 
-                    // SAMPLE DATA FOR READING (PART 5 - 7)
-                    readingData: {
-                        5: [
-                            {
-                                id: 'r5_1',
-                                questionSentence: 'Ms. Clara requested that the revised contract be sent to her office ______ Friday afternoon.',
-                                options: {
-                                    A: 'before',
-                                    B: 'between',
-                                    C: 'during',
-                                    D: 'until'
-                                },
-                                correctAnswer: 'A',
-                                translation: 'Cô Clara đã yêu cầu hợp đồng được chỉnh sửa phải được gửi tới văn phòng cô ấy trước chiều thứ Sáu.',
-                                keyVocab: [
-                                    { word: 'request', meaning: 'yêu cầu', type: 'v' },
-                                    { word: 'revised', meaning: 'đã được sửa đổi', type: 'adj' }
-                                ],
-                                explanation: 'Cấu trúc giới từ chỉ mốc thời gian hạn chót. "Before Friday afternoon" nghĩa là trước chiều thứ Sáu (hợp lý nhất trong văn cảnh kinh doanh).'
-                            },
-                            {
-                                id: 'r5_2',
-                                questionSentence: 'All employees are required to attend the safety seminar ______ they have already completed the training online.',
-                                options: {
-                                    A: 'despite',
-                                    B: 'unless',
-                                    C: 'whereas',
-                                    D: 'in order that'
-                                },
-                                correctAnswer: 'B',
-                                translation: 'Tất cả nhân viên được yêu cầu tham dự buổi hội thảo an toàn trừ khi họ đã hoàn thành khóa đào tạo trực tuyến.',
-                                keyVocab: [
-                                    { word: 'attend', meaning: 'tham dự', type: 'v' },
-                                    { word: 'unless', meaning: 'trừ khi (if not)', type: 'conj' }
-                                ],
-                                explanation: '"Unless" mang nghĩa "trừ khi", nối 2 mệnh đề chỉ điều kiện ngoại lệ.'
-                            },
-                            {
-                                id: 'r5_3',
-                                questionSentence: 'The board of directors agreed that Mr. Harrison is the most ______ candidate for the managerial position.',
-                                options: {
-                                    A: 'qualify',
-                                    B: 'qualification',
-                                    C: 'qualified',
-                                    D: 'qualifying'
-                                },
-                                correctAnswer: 'C',
-                                translation: 'Hội đồng quản trị đã đồng ý rằng ông Harrison là ứng viên đủ năng lực nhất cho vị trí quản lý.',
-                                keyVocab: [
-                                    { word: 'candidate', meaning: 'ứng viên', type: 'n' },
-                                    { word: 'qualified', meaning: 'đủ phẩm chất, năng lực', type: 'adj' }
-                                ],
-                                explanation: 'Đứng sau "the most" và đứng trước danh từ "candidate" cần một tính từ. "Qualified" mang nghĩa có đủ bằng cấp/năng lực.'
-                            }
-                        ],
-                        6: [
-                            {
-                                id: 'r6_1',
-                                passageTitle: 'Thông báo về chính sách làm việc từ xa',
-                                passage: 'To: All Staff\nFrom: Human Resources\nSubject: Hybrid Work Policy Update\n\nStarting next month, Nexus Corp will implement a new hybrid work model. Employees may work from home up to two days per week. However, team members must ______ their remote work schedules with their direct supervisors in advance.',
-                                questionSentence: 'Điền từ thích hợp vào khoảng trống trong thông báo trên:',
-                                options: {
-                                    A: 'coordinate',
-                                    B: 'coordination',
-                                    C: 'coordinated',
-                                    D: 'coordinating'
-                                },
-                                correctAnswer: 'A',
-                                translation: 'Tuy nhiên, các thành viên trong đội phải phối hợp lịch làm việc từ xa của họ với người giám sát trực tiếp trước.',
-                                keyVocab: [
-                                    { word: 'implement', meaning: 'triển khai, thực thi', type: 'v' },
-                                    { word: 'coordinate', meaning: 'phối hợp, sắp xếp', type: 'v' }
-                                ],
-                                explanation: 'Đứng sau động từ khuyết thiếu "must" cần một động từ nguyên thể không "to" -> chọn "coordinate" (A).'
-                            }
-                        ],
-                        7: [
-                            {
-                                id: 'r7_1',
-                                passageType: 'Email thương mại (Business Email)',
-                                passageTitle: 'Email đặt hàng thiết bị từ Công ty Apex',
-                                passage: 'From: David Miller (d.miller@apexlogistics.com)\nTo: Sales Department (sales@technoplus.com)\nDate: October 14\nSubject: Order Inquiry - Model X5 Printers\n\nDear Sales Team,\n\nI am writing to inquire about the availability of 15 units of the Model X5 Laser Printer listed on your catalog. Our office in Chicago is expanding, and we need these printers delivered before October 28.\n\nCould you please confirm if you have enough stock and provide a price quotation including expedited shipping fees? If your company offers a volume discount for orders over 10 units, please apply it to the quote.\n\nThank you for your prompt assistance.\n\nBest regards,\nDavid Miller\nOperations Manager',
-                                questionSentence: 'What is the main purpose of David Miller\'s email?',
-                                options: {
-                                    A: 'To apply for a manager position in Chicago',
-                                    B: 'To request pricing and availability for printers',
-                                    C: 'To report a defective printer model',
-                                    D: 'To cancel a previous shipping order'
-                                },
-                                correctAnswer: 'B',
-                                translation: 'Mục đích chính trong email của David Miller là gì? -> Yêu cầu báo giá và xác nhận tình trạng còn hàng của máy in.',
-                                keyVocab: [
-                                    { word: 'inquire', meaning: 'hỏi, yêu cầu thông tin', type: 'v' },
-                                    { word: 'price quotation', meaning: 'bảng báo giá', type: 'n' },
-                                    { word: 'expedited', meaning: 'hỏa tốc, nhanh chóng', type: 'adj' }
-                                ],
-                                explanation: 'Trong dòng thứ nhất & hai của email: "inquire about the availability of 15 units... provide a price quotation" -> Người gửi muốn hỏi thông tin về số lượng và báo giá máy in.'
-                            }
-                        ]
-                    }
+                        // PART 2 (4 items)
+                        {
+                            id: 'm_p2_1', part: 2, title: 'Hỏi & Đáp thời gian',
+                            options: { A: 'At two o\'clock in Meeting Room B.', B: 'Yes, I submitted the report yesterday.', C: 'By taking the train.' },
+                            correctAnswer: 'A',
+                            transcript: [{ speaker: 'Audio', text: 'When is the strategy meeting scheduled to start?', translation: 'Cuộc họp chiến lược dự kiến bắt đầu khi nào?' }],
+                            explanation: 'Câu hỏi "When" yêu cầu đáp án thời gian (At two o\'clock).'
+                        },
+                        {
+                            id: 'm_p2_2', part: 2, title: 'Hỏi vị trí tài liệu',
+                            options: { A: 'Mr. Davis approved it.', B: 'On the top shelf in the filing cabinet.', C: 'No, I don\'t need more paper.' },
+                            correctAnswer: 'B',
+                            transcript: [{ speaker: 'Audio', text: 'Where can I find the quarterly financial reports?', translation: 'Tìm báo cáo tài chính ở đâu?' }],
+                            explanation: 'Câu hỏi "Where" chọn địa điểm (On the top shelf).'
+                        },
+                        {
+                            id: 'm_p2_3', part: 2, title: 'Hỏi nhân sự responsible',
+                            options: { A: 'Ms. Jenkins from marketing.', B: 'Yes, it was very expensive.', C: 'Next week on Monday.' },
+                            correctAnswer: 'A',
+                            transcript: [{ speaker: 'Audio', text: 'Who is leading the new website redesign project?', translation: 'Ai phụ trách dự án thiết kế lại website?' }],
+                            explanation: 'Câu hỏi "Who" chọn danh tính người (Ms. Jenkins).'
+                        },
+                        {
+                            id: 'm_p2_4', part: 2, title: 'Hỏi lý do trì hoãn',
+                            options: { A: 'Because the flight was delayed.', B: 'In the main auditorium.', C: 'Three times a week.' },
+                            correctAnswer: 'A',
+                            transcript: [{ speaker: 'Audio', text: 'Why was the guest speaker late for the seminar?', translation: 'Tại sao diễn giả lại đến muộn?' }],
+                            explanation: 'Câu hỏi "Why" trả lời nguyên nhân (Because the flight was delayed).'
+                        },
+
+                        // PART 3 (3 items)
+                        {
+                            id: 'm_p3_1', part: 3, title: 'Hội thoại đặt mua thiết bị',
+                            options: { A: 'To ask about a budget proposal', B: 'To order additional office supplies', C: 'To schedule a client interview', D: 'To confirm a flight booking' },
+                            correctAnswer: 'B',
+                            transcript: [{ speaker: 'Man', text: 'Hi Sarah, have you sent out the order for the new ergonomic chairs yet?', translation: 'Chào Sarah, bạn đã nộp đơn đặt ghế chưa?' }],
+                            explanation: 'Đoạn hội thoại xoay quanh đơn đặt mua thiết bị ghế văn phòng (office supplies).'
+                        },
+                        {
+                            id: 'm_p3_2', part: 3, title: 'Hội thoại về công việc tiếp theo',
+                            options: { A: 'Sign a contract', B: 'Obtain manager approval', C: 'Contact a supplier', D: 'Call a customer' },
+                            correctAnswer: 'B',
+                            transcript: [{ speaker: 'Woman', text: 'I am waiting for the manager to approve the revised request form.', translation: 'Tôi đang chờ quản lý phê duyệt.' }],
+                            explanation: 'Bước tiếp theo là chờ quản lý phê duyệt (Obtain manager approval).'
+                        },
+                        {
+                            id: 'm_p3_3', part: 3, title: 'Hội thoại về thời hạn',
+                            options: { A: 'This afternoon', B: 'Tomorrow morning', C: 'Next week', D: 'Next month' },
+                            correctAnswer: 'C',
+                            transcript: [{ speaker: 'Man', text: 'Please let me know once it is processed because we need them next week.', translation: 'Báo tôi biết vì chúng ta cần vào tuần sau.' }],
+                            explanation: 'Thời hạn cần thiết bị là tuần tới (Next week).'
+                        },
+
+                        // PART 4 (3 items)
+                        {
+                            id: 'm_p4_1', part: 4, title: 'Thông báo nâng cấp hệ thống',
+                            options: { A: 'A company merger', B: 'An IT system maintenance', C: 'An annual holiday party', D: 'A relocation plan' },
+                            correctAnswer: 'B',
+                            transcript: [{ speaker: 'Speaker', text: 'The IT department will conduct routine server maintenance tonight starting at 10 PM.', translation: 'Bộ phận IT sẽ bảo trì máy chủ.' }],
+                            explanation: 'Thông báo về bảo trì máy chủ IT (IT system maintenance).'
+                        },
+                        {
+                            id: 'm_p4_2', part: 4, title: 'Ảnh hưởng dịch vụ',
+                            options: { A: 'Parking garage will close', B: 'Email and network services will be unavailable', C: 'The cafeteria will be closed', D: 'Air conditioning will be off' },
+                            correctAnswer: 'B',
+                            transcript: [{ speaker: 'Speaker', text: 'During this time, the company network and email services will be unavailable.', translation: 'Mạng và email sẽ tạm ngắt.' }],
+                            explanation: 'Dịch vụ bị ảnh hưởng là email và mạng nội bộ.'
+                        },
+                        {
+                            id: 'm_p4_3', part: 4, title: 'Hành động nhân viên cần làm',
+                            options: { A: 'Leave the building early', B: 'Save all work before leaving', C: 'Change password', D: 'Turn off lights' },
+                            correctAnswer: 'B',
+                            transcript: [{ speaker: 'Speaker', text: 'Please make sure to save all your work before leaving.', translation: 'Vui lòng lưu toàn bộ công việc trước khi về.' }],
+                            explanation: 'Yêu cầu nhân viên lưu bài trước khi về (Save all work).'
+                        },
+
+                        // PART 5 (5 items)
+                        {
+                            id: 'm_p5_1', part: 5, questionSentence: 'Ms. Clara requested that the revised contract be sent to her office ______ Friday afternoon.',
+                            options: { A: 'before', B: 'between', C: 'during', D: 'until' },
+                            correctAnswer: 'A', translation: 'Gửi trước chiều thứ Sáu.', explanation: 'Dùng giới từ "before" chỉ mốc thời hạn.'
+                        },
+                        {
+                            id: 'm_p5_2', part: 5, questionSentence: 'All employees are required to attend the safety seminar ______ they have already completed training online.',
+                            options: { A: 'despite', B: 'unless', C: 'whereas', D: 'in order that' },
+                            correctAnswer: 'B', translation: 'Trừ khi đã hoàn thành trực tuyến.', explanation: '"Unless" mang nghĩa trừ khi.'
+                        },
+                        {
+                            id: 'm_p5_3', part: 5, questionSentence: 'The board of directors agreed that Mr. Harrison is the most ______ candidate for the managerial position.',
+                            options: { A: 'qualify', B: 'qualification', C: 'qualified', D: 'qualifying' },
+                            correctAnswer: 'C', translation: 'Ứng viên đủ năng lực nhất.', explanation: 'Cần tính từ "qualified" trước danh từ candidate.'
+                        },
+                        {
+                            id: 'm_p5_4', part: 5, questionSentence: 'The marketing team worked ______ to complete the promotional campaign before the product launch.',
+                            options: { A: 'diligence', B: 'diligent', C: 'diligently', D: 'more diligent' },
+                            correctAnswer: 'C', translation: 'Làm việc một cách siêng năng.', explanation: 'Đứng sau động từ worked cần trạng từ "diligently".'
+                        },
+                        {
+                            id: 'm_p5_5', part: 5, questionSentence: 'Please review the attached budget proposal and provide your feedback ______ the end of the day.',
+                            options: { A: 'by', B: 'on', C: 'to', D: 'for' },
+                            correctAnswer: 'A', translation: 'Trước thời điểm cuối ngày.', explanation: 'Giới từ "by" chỉ thời hạn hạn chót.'
+                        },
+
+                        // PART 6 (4 items)
+                        {
+                            id: 'm_p6_1', part: 6, passageTitle: 'Cập nhật chính sách làm việc',
+                            passage: 'To: All Staff\nFrom: HR Department\n\nNexus Corp will implement a new hybrid work model starting next month. Employees may work remotely up to two days per week. However, team members must ______ their schedule with supervisors in advance.',
+                            questionSentence: 'Điền đáp án thích hợp vào chỗ trống (1):',
+                            options: { A: 'coordinate', B: 'coordination', C: 'coordinated', D: 'coordinating' },
+                            correctAnswer: 'A', translation: 'Phải phối hợp lịch làm việc.', explanation: 'Sau "must" cần động từ nguyên thể "coordinate".'
+                        },
+                        {
+                            id: 'm_p6_2', part: 6, passageTitle: 'Cập nhật chính sách làm việc (tiếp)',
+                            passage: '______ This ensures seamless communication within each department.',
+                            questionSentence: 'Chọn câu nối thích hợp vào chỗ trống (2):',
+                            options: { A: 'Requests should be submitted via the HR portal.', B: 'The cafeteria will close early today.', C: 'Parking spaces are limited.', D: 'Laptops will be upgraded next year.' },
+                            correctAnswer: 'A', translation: 'Yêu cầu nên gửi qua cổng HR.', explanation: 'Câu nối logic về việc nộp yêu cầu lịch làm việc.'
+                        },
+                        {
+                            id: 'm_p6_3', part: 6, passageTitle: 'Cập nhật chính sách làm việc (tiếp)',
+                            passage: 'Remote work eligibility is dependent upon employee performance and position ______.',
+                            questionSentence: 'Điền từ thích hợp (3):',
+                            options: { A: 'requirements', B: 'require', C: 'required', D: 'requiring' },
+                            correctAnswer: 'A', translation: 'Yêu cầu vị trí công việc.', explanation: 'Cụm danh từ "position requirements".'
+                        },
+                        {
+                            id: 'm_p6_4', part: 6, passageTitle: 'Cập nhật chính sách làm việc (tiếp)',
+                            passage: 'Thank you for your ______ and dedication to making this transition smooth.',
+                            questionSentence: 'Điền từ thích hợp (4):',
+                            options: { A: 'cooperation', B: 'cooperate', C: 'cooperative', D: 'cooperatively' },
+                            correctAnswer: 'A', translation: 'Cảm ơn sự hợp tác của bạn.', explanation: 'Sau tính từ sở hữu "your" cần danh từ "cooperation".'
+                        },
+
+                        // PART 7 (4 items)
+                        {
+                            id: 'm_p7_1', part: 7, passageType: 'Email thương mại',
+                            passageTitle: 'Inquiry - Model X5 Printers',
+                            passage: 'From: David Miller (d.miller@apexlogistics.com)\nTo: Sales Team (sales@technoplus.com)\nDate: October 14\n\nDear Sales Team,\nI am writing to inquire about the availability of 15 units of the Model X5 Laser Printer listed on your catalog. Our office in Chicago is expanding, and we need these printers delivered before October 28.\nCould you please confirm if you have enough stock and provide a price quotation including expedited shipping fees? If your company offers a volume discount for orders over 10 units, please apply it to the quote.\n\nBest regards,\nDavid Miller',
+                            questionSentence: 'What is the main purpose of David Miller\'s email?',
+                            options: { A: 'To apply for a job position', B: 'To request pricing and availability for printers', C: 'To report a defective printer model', D: 'To cancel a shipping order' },
+                            correctAnswer: 'B', translation: 'Yêu cầu báo giá và số lượng còn hàng.', explanation: 'Email hỏi về "availability... price quotation" -> chọn B.'
+                        },
+                        {
+                            id: 'm_p7_2', part: 7, passageType: 'Email thương mại (tiếp)',
+                            passageTitle: 'Inquiry - Model X5 Printers',
+                            passage: 'Re: Inquiry - Model X5 Printers...',
+                            questionSentence: 'By what date does Mr. Miller require the delivery?',
+                            options: { A: 'October 14', B: 'October 28', C: 'November 1', D: 'October 10' },
+                            correctAnswer: 'B', translation: 'Cần giao trước ngày 28 tháng 10.', explanation: 'Đoạn văn ghi rõ "delivered before October 28".'
+                        },
+                        {
+                            id: 'm_p7_3', part: 7, passageType: 'Email thương mại (tiếp)',
+                            passageTitle: 'Inquiry - Model X5 Printers',
+                            passage: 'Re: Inquiry - Model X5 Printers...',
+                            questionSentence: 'What special condition does Mr. Miller mention regarding discounts?',
+                            options: { A: 'Discounts for advance payments', B: 'Volume discounts for orders exceeding 10 units', C: 'Free shipping for corporate clients', D: 'Seasonal holiday discounts' },
+                            correctAnswer: 'B', translation: 'Giảm giá theo số lượng nếu trên 10 chiếc.', explanation: 'Văn bản đề cập "volume discount for orders over 10 units".'
+                        },
+                        {
+                            id: 'm_p7_4', part: 7, passageType: 'Email thương mại (tiếp)',
+                            passageTitle: 'Inquiry - Model X5 Printers',
+                            passage: 'Re: Inquiry - Model X5 Printers...',
+                            questionSentence: 'Where is Mr. Miller\'s expanding office located?',
+                            options: { A: 'New York', B: 'Chicago', C: 'Los Angeles', D: 'Seattle' },
+                            correctAnswer: 'B', translation: 'Văn phòng mở rộng tại Chicago.', explanation: 'Văn bản ghi rõ "Our office in Chicago is expanding".'
+                        }
+                    ],
+
+                    // Standard Practice Datasets (Part 1 - Part 7)
+                    listeningData: { 1: [], 2: [], 3: [], 4: [] },
+                    readingData: { 5: [], 6: [], 7: [] }
                 }
             },
 
             computed: {
-                // Calculated overall statistics
                 overallAccuracy() {
                     if (this.stats.totalDone === 0) return 0;
                     const totalCorrect = this.stats.listeningCorrect + this.stats.readingCorrect;
@@ -1109,54 +1446,64 @@
                     if (this.stats.readingTotal === 0) return 0;
                     return Math.round((this.stats.readingCorrect / this.stats.readingTotal) * 100);
                 },
-                estimatedListeningScore() {
-                    if (this.stats.listeningTotal === 0) return 50;
-                    const acc = this.listeningAccuracy / 100;
-                    return Math.min(495, Math.max(50, Math.round(acc * 445 + 50)));
-                },
-                estimatedReadingScore() {
-                    if (this.stats.readingTotal === 0) return 50;
-                    const acc = this.readingAccuracy / 100;
-                    return Math.min(495, Math.max(50, Math.round(acc * 445 + 50)));
+                latestMockScore() {
+                    if (this.testHistory.length === 0) return null;
+                    return this.testHistory[0];
                 },
 
-                // Current Listening Question & List
-                currentListeningList() {
-                    return this.listeningData[this.listeningPart] || [];
+                // Active Questions in Mock Test
+                activeTestQuestions() {
+                    if (this.selectedTestType === 'listening') {
+                        return this.mockQuestionsPool.filter(q => q.part <= 4);
+                    }
+                    if (this.selectedTestType === 'reading') {
+                        return this.mockQuestionsPool.filter(q => q.part >= 5);
+                    }
+                    return this.mockQuestionsPool; // Mini Test: All 25 questions
                 },
-                currentListeningQuestion() {
-                    return this.currentListeningList[this.currentListeningIndex] || null;
+                activeTestQuestion() {
+                    return this.activeTestQuestions[this.currentTestIndex] || null;
+                },
+                answeredCount() {
+                    return Object.keys(this.testAnswers).length;
                 },
 
-                // Current Reading Question & List
-                currentReadingList() {
-                    return this.readingData[this.readingPart] || [];
-                },
-                currentReadingQuestion() {
-                    return this.currentReadingList[this.currentReadingIndex] || null;
-                },
-
+                // Current Listening & Reading Practice items
+                currentListeningList() { return this.listeningData[this.listeningPart] || []; },
+                currentListeningQuestion() { return this.currentListeningList[this.currentListeningIndex] || null; },
+                currentReadingList() { return this.readingData[this.readingPart] || []; },
+                currentReadingQuestion() { return this.currentReadingList[this.currentReadingIndex] || null; },
                 highlightedQuestionSentence() {
                     if (!this.currentReadingQuestion || !this.currentReadingQuestion.questionSentence) return '';
                     return this.currentReadingQuestion.questionSentence.replace('______', '<span class="px-3 py-1 mx-1 bg-amber-100 text-amber-900 border border-amber-300 font-extrabold rounded-md">______</span>');
                 },
 
-                // Flashcard Navigation
                 currentFlashcard() {
-                    if (this.vocabList.length === 0) return { word: '', meaning: '', type: '', context: '' };
+                    if (this.vocabList.length === 0) return { word: '', meaning: '', type: '' };
                     return this.vocabList[this.currentFlashcardIndex] || this.vocabList[0];
                 }
             },
 
             mounted() {
                 this.loadFromLocalStorage();
-                // Pre-fill standard TOEIC vocabulary if empty
+                this.startFreeStudyTimer();
+
+                // Populate Practice Datasets from Mock Pool for seamlessly integrated practice
+                this.listeningData[1] = this.mockQuestionsPool.filter(q => q.part === 1);
+                this.listeningData[2] = this.mockQuestionsPool.filter(q => q.part === 2);
+                this.listeningData[3] = this.mockQuestionsPool.filter(q => q.part === 3);
+                this.listeningData[4] = this.mockQuestionsPool.filter(q => q.part === 4);
+
+                this.readingData[5] = this.mockQuestionsPool.filter(q => q.part === 5);
+                this.readingData[6] = this.mockQuestionsPool.filter(q => q.part === 6);
+                this.readingData[7] = this.mockQuestionsPool.filter(q => q.part === 7);
+
                 if (this.vocabList.length === 0) {
                     this.vocabList = [
-                        { word: 'Implement', meaning: 'Thực thi, áp dụng chính sách mới', type: 'v', context: 'The company will implement a new policy next month.' },
-                        { word: 'Schedule', meaning: 'Lịch trình, lên lịch làm việc', type: 'v/n', context: 'The strategy meeting is scheduled for 2 PM.' },
-                        { word: 'Quotation', meaning: 'Bảng báo giá thương mại', type: 'n', context: 'Please provide a price quotation for 15 units.' },
-                        { word: 'Qualified', meaning: 'Đủ năng lực, phẩm chất chuyên môn', type: 'adj', context: 'He is the most qualified candidate for manager.' }
+                        { word: 'Implement', meaning: 'Thực thi, áp dụng chính sách', type: 'v' },
+                        { word: 'Schedule', meaning: 'Lên lịch trình công việc', type: 'v/n' },
+                        { word: 'Quotation', meaning: 'Bảng báo giá thương mại', type: 'n' },
+                        { word: 'Qualified', meaning: 'Đủ phẩm chất, năng lực chuyên môn', type: 'adj' }
                     ];
                     this.saveToLocalStorage();
                 }
@@ -1164,158 +1511,247 @@
 
             methods: {
                 navBtnClass(tab) {
-                    return this.activeTab === tab
-                        ? 'bg-blue-50 text-blue-600 font-bold'
-                        : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900';
+                    return this.activeTab === tab ? 'bg-blue-50 text-blue-600 font-bold' : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900';
                 },
                 selectTabMobile(tab) {
                     this.activeTab = tab;
                     this.mobileMenuOpen = false;
                 },
 
-                // Timer Controls
-                toggleTimer() {
-                    if (this.isTimerRunning) {
-                        clearInterval(this.timerInterval);
-                        this.isTimerRunning = false;
-                    } else {
-                        this.isTimerRunning = true;
-                        this.timerInterval = setInterval(() => {
-                            this.timerSeconds++;
-                        }, 1000);
-                    }
+                startFreeStudyTimer() {
+                    this.timerInterval = setInterval(() => { this.timerSeconds++; }, 1000);
                 },
                 formatTime(sec) {
                     const m = Math.floor(sec / 60);
                     const s = sec % 60;
                     return `${m.toString().padStart(2, '0')}:${s.toString().padStart(2, '0')}`;
                 },
-
-                // LISTENING LOGIC
-                selectListeningPart(part) {
-                    this.listeningPart = part;
-                    this.currentListeningIndex = 0;
-                },
-                getListeningPartName(part) {
-                    const names = { 1: 'Mô tả tranh', 2: 'Hỏi & Đáp', 3: 'Hội thoại ngắn', 4: 'Bài nói ngắn' };
+                getPartName(part) {
+                    const names = { 1: 'Mô tả tranh', 2: 'Hỏi & Đáp', 3: 'Hội thoại ngắn', 4: 'Bài nói ngắn', 5: 'Điền câu', 6: 'Điền đoạn', 7: 'Đọc hiểu' };
                     return names[part] || '';
                 },
-                selectListeningAnswer(key) {
-                    if (this.listeningSubmitted[this.currentListeningQuestion.id]) return;
-                    this.listeningUserAnswers[this.currentListeningQuestion.id] = key;
-                },
-                getListeningOptionClass(key) {
-                    const qId = this.currentListeningQuestion.id;
-                    const selected = this.listeningUserAnswers[qId] === key;
-                    const submitted = this.listeningSubmitted[qId];
-                    const isCorrect = key === this.currentListeningQuestion.correctAnswer;
-
-                    if (submitted) {
-                        if (isCorrect) return 'bg-emerald-50 border-emerald-500 text-emerald-900 font-bold';
-                        if (selected && !isCorrect) return 'bg-rose-50 border-rose-400 text-rose-900';
-                        return 'bg-white border-slate-200 opacity-60';
-                    }
-                    if (selected) return 'bg-blue-50 border-blue-600 text-blue-900 font-bold shadow-sm';
-                    return 'bg-white border-slate-200 hover:border-slate-300';
-                },
-                submitListeningAnswer() {
-                    const q = this.currentListeningQuestion;
-                    if (!q || !this.listeningUserAnswers[q.id]) return;
-
-                    this.listeningSubmitted[q.id] = true;
-                    this.stats.totalDone++;
-                    this.stats.listeningTotal++;
-                    if (this.listeningUserAnswers[q.id] === q.correctAnswer) {
-                        this.stats.listeningCorrect++;
-                    }
-                    this.saveToLocalStorage();
-                },
-                prevListening() {
-                    if (this.currentListeningIndex > 0) this.currentListeningIndex--;
-                },
-                nextListening() {
-                    if (this.currentListeningIndex < this.currentListeningList.length - 1) this.currentListeningIndex++;
+                getTestTitle(type) {
+                    if (type === 'listening') return 'Thi Thử Nghe (Listening Test)';
+                    if (type === 'reading') return 'Thi Thử Đọc (Reading Test)';
+                    return 'Mini Test TOEIC 30 Phút';
                 },
 
-                // WEB SPEECH API FOR AUDIO SYNTHESIS
-                playListeningAudio() {
-                    if (!('speechSynthesis' in window)) {
-                        alert('Trình duyệt của bạn không hỗ trợ tính năng phát âm thanh Speech Synthesis.');
-                        return;
-                    }
+                // MOCK TEST LOGIC
+                startMockTest() {
+                    this.mockState = 'taking';
+                    this.currentTestIndex = 0;
+                    this.testAnswers = {};
+                    this.testFlags = {};
+                    this.isPlayingMockAudio = false;
 
-                    if (this.isPlayingAudio) {
+                    // Set timer seconds based on test type
+                    if (this.selectedTestType === 'listening') this.testTimerSeconds = 1200; // 20 mins
+                    else if (this.selectedTestType === 'reading') this.testTimerSeconds = 1500; // 25 mins
+                    else this.testTimerSeconds = 1800; // 30 mins for Mini Test
+
+                    if (this.testTimerInterval) clearInterval(this.testTimerInterval);
+                    this.testTimerInterval = setInterval(() => {
+                        if (this.testTimerSeconds > 0) {
+                            this.testTimerSeconds--;
+                        } else {
+                            this.finishMockTest(); // Auto submit on zero
+                        }
+                    }, 1000);
+                },
+
+                selectMockAnswer(qId, optKey) {
+                    if (this.mockState !== 'taking') return;
+                    this.testAnswers[qId] = optKey;
+                },
+                toggleFlag(qId) {
+                    this.testFlags[qId] = !this.testFlags[qId];
+                },
+                prevMockQuestion() {
+                    if (this.currentTestIndex > 0) this.currentTestIndex--;
+                },
+                nextMockQuestion() {
+                    if (this.currentTestIndex < this.activeTestQuestions.length - 1) this.currentTestIndex++;
+                },
+                formatQuestionSentence(text) {
+                    if (!text) return '';
+                    return text.replace('______', '<span class="px-2 py-0.5 mx-1 bg-amber-100 border border-amber-300 font-extrabold rounded">______</span>');
+                },
+
+                playMockAudio() {
+                    if (!('speechSynthesis' in window)) return;
+                    if (this.isPlayingMockAudio) {
                         window.speechSynthesis.cancel();
-                        this.isPlayingAudio = false;
+                        this.isPlayingMockAudio = false;
                         return;
                     }
 
-                    const q = this.currentListeningQuestion;
-                    if (!q || !q.transcript) return;
+                    const q = this.activeTestQuestion;
+                    if (!q) return;
 
-                    // Combine lines to speak
-                    let fullScript = q.transcript.map(line => line.text).join('. ');
+                    let scriptText = '';
+                    if (q.transcript) {
+                        scriptText = q.transcript.map(l => l.text).join('. ');
+                    } else if (q.options) {
+                        scriptText = `Question ${this.currentTestIndex + 1}. ` + Object.entries(q.options).map(([k, v]) => `Option ${k}: ${v}`).join('. ');
+                    }
 
-                    const utterance = new SpeechSynthesisUtterance(fullScript);
-                    utterance.rate = this.audioSpeed;
-                    utterance.lang = this.audioAccent;
+                    const utterance = new SpeechSynthesisUtterance(scriptText);
+                    utterance.rate = this.testAudioSpeed;
+                    utterance.lang = 'en-US';
 
-                    utterance.onstart = () => { this.isPlayingAudio = true; };
-                    utterance.onend = () => { this.isPlayingAudio = false; };
-                    utterance.onerror = () => { this.isPlayingAudio = false; };
+                    utterance.onstart = () => { this.isPlayingMockAudio = true; };
+                    utterance.onend = () => { this.isPlayingMockAudio = false; };
+                    utterance.onerror = () => { this.isPlayingMockAudio = false; };
 
                     window.speechSynthesis.speak(utterance);
                 },
 
-                // READING LOGIC
-                selectReadingPart(part) {
-                    this.readingPart = part;
-                    this.currentReadingIndex = 0;
-                },
-                getReadingPartName(part) {
-                    const names = { 5: 'Hoàn thành câu', 6: 'Hoàn thành đoạn văn', 7: 'Đọc hiểu văn bản' };
-                    return names[part] || '';
-                },
-                selectReadingAnswer(key) {
-                    if (this.readingSubmitted[this.currentReadingQuestion.id]) return;
-                    this.readingUserAnswers[this.currentReadingQuestion.id] = key;
-                },
-                getReadingOptionClass(key) {
-                    const qId = this.currentReadingQuestion.id;
-                    const selected = this.readingUserAnswers[qId] === key;
-                    const submitted = this.readingSubmitted[qId];
-                    const isCorrect = key === this.currentReadingQuestion.correctAnswer;
+                finishMockTest() {
+                    if (this.testTimerInterval) clearInterval(this.testTimerInterval);
+                    if ('speechSynthesis' in window) window.speechSynthesis.cancel();
 
-                    if (submitted) {
-                        if (isCorrect) return 'bg-emerald-50 border-emerald-500 text-emerald-900 font-bold';
-                        if (selected && !isCorrect) return 'bg-rose-50 border-rose-400 text-rose-900';
+                    this.showConfirmSubmitModal = false;
+                    this.mockState = 'result';
+
+                    // Calculate Scores
+                    let listeningCorrect = 0;
+                    let listeningTotal = 0;
+                    let readingCorrect = 0;
+                    let readingTotal = 0;
+                    let partBreakdown = {};
+
+                    this.activeTestQuestions.forEach(q => {
+                        const isCorrect = (this.testAnswers[q.id] === q.correctAnswer);
+                        if (!partBreakdown[q.part]) partBreakdown[q.part] = { correct: 0, total: 0, accuracy: 0 };
+                        partBreakdown[q.part].total++;
+                        if (isCorrect) partBreakdown[q.part].correct++;
+
+                        if (q.part <= 4) {
+                            listeningTotal++;
+                            if (isCorrect) listeningCorrect++;
+                        } else {
+                            readingTotal++;
+                            if (isCorrect) readingCorrect++;
+                        }
+                    });
+
+                    // Calculate percentage accuracy per part
+                    Object.keys(partBreakdown).forEach(p => {
+                        const b = partBreakdown[p];
+                        b.accuracy = b.total > 0 ? Math.round((b.correct / b.total) * 100) : 0;
+                    });
+
+                    // Scaled TOEIC Score Calculation (Scaled to 495 per skill)
+                    const lAcc = listeningTotal > 0 ? listeningCorrect / listeningTotal : 0;
+                    const rAcc = readingTotal > 0 ? readingCorrect / readingTotal : 0;
+
+                    const listeningScore = listeningTotal > 0 ? Math.min(495, Math.max(50, Math.round(lAcc * 445 + 50))) : 0;
+                    const readingScore = readingTotal > 0 ? Math.min(495, Math.max(50, Math.round(rAcc * 445 + 50))) : 0;
+                    const totalScore = listeningScore + readingScore;
+
+                    let levelAssessment = 'Sơ cấp (300 - 450 TOEIC)';
+                    if (totalScore >= 800) levelAssessment = 'Cao cấp (800 - 990 TOEIC) - Sẵn sàng đi làm';
+                    else if (totalScore >= 650) levelAssessment = 'Trung cấp khá (650 - 795 TOEIC)';
+                    else if (totalScore >= 500) levelAssessment = 'Trung cấp (500 - 645 TOEIC)';
+
+                    const initialTime = (this.selectedTestType === 'listening' ? 1200 : (this.selectedTestType === 'reading' ? 1500 : 1800));
+                    const timeSpentSeconds = initialTime - this.testTimerSeconds;
+
+                    this.lastTestResult = {
+                        totalScore, listeningScore, readingScore, timeSpentSeconds, levelAssessment, partBreakdown
+                    };
+
+                    // Add to History
+                    const historyRecord = {
+                        date: new Date().toLocaleDateString('vi-VN'),
+                        testName: this.getTestTitle(this.selectedTestType),
+                        totalScore, listeningScore, readingScore, timeSpentSeconds
+                    };
+                    this.testHistory.unshift(historyRecord);
+                    this.saveToLocalStorage();
+                },
+
+                startReviewMode() {
+                    this.mockState = 'review';
+                    this.currentTestIndex = 0;
+                },
+                getReviewOptionClass(q, optKey) {
+                    const isCorrect = optKey === q.correctAnswer;
+                    const userSelected = this.testAnswers[q.id] === optKey;
+
+                    if (isCorrect) return 'bg-emerald-50 border-emerald-500 font-bold text-emerald-900';
+                    if (userSelected && !isCorrect) return 'bg-rose-50 border-rose-400 font-bold text-rose-900';
+                    return 'bg-white border-slate-200 opacity-70';
+                },
+
+                // PRACTICE & VOCABULARY METHODS
+                selectListeningPart(p) { this.listeningPart = p; this.currentListeningIndex = 0; },
+                getListeningPartName(p) { return this.getPartName(p); },
+                selectListeningAnswer(k) { if (!this.listeningSubmitted[this.currentListeningQuestion.id]) this.listeningUserAnswers[this.currentListeningQuestion.id] = k; },
+                getListeningOptionClass(k) {
+                    const qId = this.currentListeningQuestion.id;
+                    const sel = this.listeningUserAnswers[qId] === k;
+                    const sub = this.listeningSubmitted[qId];
+                    if (sub) {
+                        if (k === this.currentListeningQuestion.correctAnswer) return 'bg-emerald-50 border-emerald-500 font-bold text-emerald-900';
+                        if (sel) return 'bg-rose-50 border-rose-400 font-bold text-rose-900';
                         return 'bg-white border-slate-200 opacity-60';
                     }
-                    if (selected) return 'bg-purple-50 border-purple-600 text-purple-900 font-bold shadow-sm';
-                    return 'bg-white border-slate-200 hover:border-slate-300';
+                    return sel ? 'bg-blue-50 border-blue-600 font-bold text-blue-900 shadow-sm' : 'bg-white border-slate-200 hover:border-slate-300';
+                },
+                submitListeningAnswer() {
+                    const q = this.currentListeningQuestion;
+                    if (!q || !this.listeningUserAnswers[q.id]) return;
+                    this.listeningSubmitted[q.id] = true;
+                    this.stats.totalDone++;
+                    this.stats.listeningTotal++;
+                    if (this.listeningUserAnswers[q.id] === q.correctAnswer) this.stats.listeningCorrect++;
+                    this.saveToLocalStorage();
+                },
+                playListeningAudio() {
+                    if (!('speechSynthesis' in window)) return;
+                    if (this.isPlayingAudio) { window.speechSynthesis.cancel(); this.isPlayingAudio = false; return; }
+                    const q = this.currentListeningQuestion;
+                    if (!q || !q.transcript) return;
+                    const text = q.transcript.map(l => l.text).join('. ');
+                    const utterance = new SpeechSynthesisUtterance(text);
+                    utterance.rate = this.audioSpeed;
+                    utterance.lang = this.audioAccent;
+                    utterance.onstart = () => { this.isPlayingAudio = true; };
+                    utterance.onend = () => { this.isPlayingAudio = false; };
+                    window.speechSynthesis.speak(utterance);
+                },
+                prevListening() { if (this.currentListeningIndex > 0) this.currentListeningIndex--; },
+                nextListening() { if (this.currentListeningIndex < this.currentListeningList.length - 1) this.currentListeningIndex++; },
+
+                selectReadingPart(p) { this.readingPart = p; this.currentReadingIndex = 0; },
+                getReadingPartName(p) { return this.getPartName(p); },
+                selectReadingAnswer(k) { if (!this.readingSubmitted[this.currentReadingQuestion.id]) this.readingUserAnswers[this.currentReadingQuestion.id] = k; },
+                getReadingOptionClass(k) {
+                    const qId = this.currentReadingQuestion.id;
+                    const sel = this.readingUserAnswers[qId] === k;
+                    const sub = this.readingSubmitted[qId];
+                    if (sub) {
+                        if (k === this.currentReadingQuestion.correctAnswer) return 'bg-emerald-50 border-emerald-500 font-bold text-emerald-900';
+                        if (sel) return 'bg-rose-50 border-rose-400 font-bold text-rose-900';
+                        return 'bg-white border-slate-200 opacity-60';
+                    }
+                    return sel ? 'bg-purple-50 border-purple-600 font-bold text-purple-900 shadow-sm' : 'bg-white border-slate-200 hover:border-slate-300';
                 },
                 submitReadingAnswer() {
                     const q = this.currentReadingQuestion;
                     if (!q || !this.readingUserAnswers[q.id]) return;
-
                     this.readingSubmitted[q.id] = true;
                     this.stats.totalDone++;
                     this.stats.readingTotal++;
-                    if (this.readingUserAnswers[q.id] === q.correctAnswer) {
-                        this.stats.readingCorrect++;
-                    }
+                    if (this.readingUserAnswers[q.id] === q.correctAnswer) this.stats.readingCorrect++;
                     this.saveToLocalStorage();
                 },
-                prevReading() {
-                    if (this.currentReadingIndex > 0) this.currentReadingIndex--;
-                },
-                nextReading() {
-                    if (this.currentReadingIndex < this.currentReadingList.length - 1) this.currentReadingIndex++;
-                },
+                prevReading() { if (this.currentReadingIndex > 0) this.currentReadingIndex--; },
+                nextReading() { if (this.currentReadingIndex < this.currentReadingList.length - 1) this.currentReadingIndex++; },
 
-                // VOCABULARY & FLASHCARD LOGIC
                 addToVocab(word, meaning, type, context = '') {
-                    const exists = this.vocabList.some(item => item.word.toLowerCase() === word.toLowerCase());
+                    const exists = this.vocabList.some(i => i.word.toLowerCase() === word.toLowerCase());
                     if (!exists) {
                         this.vocabList.unshift({ word, meaning, type, context });
                         this.saveToLocalStorage();
@@ -1326,55 +1762,47 @@
                     this.addToVocab(this.newWord.word, this.newWord.meaning, this.newWord.type || 'v');
                     this.newWord = { word: '', meaning: '', type: '' };
                 },
-                removeVocab(index) {
-                    this.vocabList.splice(index, 1);
-                    this.saveToLocalStorage();
+                removeVocab(idx) { this.vocabList.splice(idx, 1); this.saveToLocalStorage(); },
+                speakSingleWord(w) {
+                    if (!('speechSynthesis' in window) || !w) return;
+                    const u = new SpeechSynthesisUtterance(w);
+                    u.lang = 'en-US';
+                    window.speechSynthesis.speak(u);
                 },
-                speakSingleWord(word) {
-                    if (!('speechSynthesis' in window) || !word) return;
-                    const utterance = new SpeechSynthesisUtterance(word);
-                    utterance.lang = 'en-US';
-                    utterance.rate = 0.9;
-                    window.speechSynthesis.speak(utterance);
-                },
-                prevFlashcard() {
-                    this.isCardFlipped = false;
-                    if (this.currentFlashcardIndex > 0) {
-                        this.currentFlashcardIndex--;
-                    } else {
-                        this.currentFlashcardIndex = this.vocabList.length - 1;
-                    }
-                },
-                nextFlashcard() {
-                    this.isCardFlipped = false;
-                    if (this.currentFlashcardIndex < this.vocabList.length - 1) {
-                        this.currentFlashcardIndex++;
-                    } else {
-                        this.currentFlashcardIndex = 0;
-                    }
-                },
+                prevFlashcard() { this.isCardFlipped = false; this.currentFlashcardIndex = (this.currentFlashcardIndex > 0) ? this.currentFlashcardIndex - 1 : this.vocabList.length - 1; },
+                nextFlashcard() { this.isCardFlipped = false; this.currentFlashcardIndex = (this.currentFlashcardIndex < this.vocabList.length - 1) ? this.currentFlashcardIndex + 1 : 0; },
 
-                // LOCAL STORAGE PERSISTENCE
+                // LOCAL STORAGE
                 saveToLocalStorage() {
                     localStorage.setItem('toeic_master_stats', JSON.stringify(this.stats));
                     localStorage.setItem('toeic_master_vocab', JSON.stringify(this.vocabList));
+                    localStorage.setItem('toeic_master_history', JSON.stringify(this.testHistory));
                 },
                 loadFromLocalStorage() {
-                    const savedStats = localStorage.getItem('toeic_master_stats');
-                    if (savedStats) this.stats = JSON.parse(savedStats);
+                    const s = localStorage.getItem('toeic_master_stats');
+                    if (s) this.stats = JSON.parse(s);
 
-                    const savedVocab = localStorage.getItem('toeic_master_vocab');
-                    if (savedVocab) this.vocabList = JSON.parse(savedVocab);
+                    const v = localStorage.getItem('toeic_master_vocab');
+                    if (v) this.vocabList = JSON.parse(v);
+
+                    const h = localStorage.getItem('toeic_master_history');
+                    if (h) this.testHistory = JSON.parse(h);
                 },
-                resetStats() {
-                    this.stats = {
-                        totalDone: 0,
-                        listeningCorrect: 0,
-                        listeningTotal: 0,
-                        readingCorrect: 0,
-                        readingTotal: 0
-                    };
+                clearTestHistory() {
+                    this.testHistory = [];
                     this.saveToLocalStorage();
+                },
+                reviewPastTest(item) {
+                    this.activeTab = 'mocktest';
+                    this.mockState = 'result';
+                    this.lastTestResult = {
+                        totalScore: item.totalScore,
+                        listeningScore: item.listeningScore,
+                        readingScore: item.readingScore,
+                        timeSpentSeconds: item.timeSpentSeconds,
+                        levelAssessment: item.totalScore >= 800 ? 'Cao cấp (800 - 990)' : (item.totalScore >= 650 ? 'Khá (650 - 795)' : 'Trung bình (500 - 645)'),
+                        partBreakdown: {}
+                    };
                 }
             }
         }).mount('#app');
